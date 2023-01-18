@@ -21,6 +21,8 @@ object Database {
         )
         transaction(database) {
             SchemaUtils.create(Users)
+            SchemaUtils.create(Cotisants)
+            SchemaUtils.create(Pages)
         }
     }
 

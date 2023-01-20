@@ -1,6 +1,7 @@
 package me.nathanfallet.bdeensisa.models
 
 import kotlinx.serialization.Serializable
+import me.nathanfallet.bdeensisa.database.Database
 import org.jetbrains.exposed.sql.*
 
 @Serializable
@@ -25,6 +26,19 @@ data class User(
         row.getOrNull(Users.option),
         row.getOrNull(Users.year)
     )
+
+    suspend fun hasPermission(permission: String): Boolean {
+        val permissions = mutableListOf(permission)
+        while (permissions.last().replace(".*", "").contains('.')) {
+            permissions.add(permissions.last().substringBeforeLast('.') + ".*")
+        }
+        return Database.dbQuery {
+            Permissions.select {
+                (Permissions.userId eq id) and
+                (Permissions.permission inList permissions)
+            }.count() > 0
+        }
+    }
 
 }
 

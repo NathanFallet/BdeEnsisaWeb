@@ -43,7 +43,7 @@ fun Route.login() {
                 return@post
             }
             Database.dbQuery {
-                Users.select { (Users.email eq email) or (Users.email eq email) }
+                Users.select { Users.email eq email }
                         .map { User(it) }
                         .singleOrNull()
             }

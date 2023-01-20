@@ -12,7 +12,7 @@ import me.nathanfallet.bdeensisa.models.Pages
 import org.jetbrains.exposed.sql.*
 
 fun Route.publicPages() {
-    get("/") {
+    get {
         Database.dbQuery {
             Pages.select { Pages.isHome eq true }.firstOrNull()?.let {
                 call.respond(FreeMarkerContent(

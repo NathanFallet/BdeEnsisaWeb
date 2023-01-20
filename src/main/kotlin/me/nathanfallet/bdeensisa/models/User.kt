@@ -10,7 +10,8 @@ data class User(
     val password: String?,
     val firstName: String?,
     val lastName: String?,
-    val option: String?
+    val option: String?,
+    val year: String?
 ) {
 
     constructor(
@@ -21,7 +22,8 @@ data class User(
         row.getOrNull(Users.password),
         row.getOrNull(Users.firstName),
         row.getOrNull(Users.lastName),
-        row.getOrNull(Users.option)
+        row.getOrNull(Users.option),
+        row.getOrNull(Users.year)
     )
 
 }
@@ -34,6 +36,7 @@ object Users : Table() {
     val firstName = varchar("first_name", 255)
     val lastName = varchar("last_name", 255)
     val option = varchar("option", 255)
+    val year = varchar("year", 255)
 
     override val primaryKey = PrimaryKey(id)
 

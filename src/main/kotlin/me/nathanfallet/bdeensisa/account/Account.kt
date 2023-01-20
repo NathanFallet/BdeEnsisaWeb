@@ -10,6 +10,7 @@ data class AccountSession(val userId: String)
 
 fun Route.account() {
     route("/account") {
-        
+        login()
+        register()
     }
 }

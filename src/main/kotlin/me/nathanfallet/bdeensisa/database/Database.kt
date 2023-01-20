@@ -23,6 +23,9 @@ object Database {
             SchemaUtils.create(Users)
             SchemaUtils.create(Cotisants)
             SchemaUtils.create(Pages)
+            SchemaUtils.create(Topics)
+            SchemaUtils.create(Events)
+            SchemaUtils.create(Tickets)
         }
     }
 

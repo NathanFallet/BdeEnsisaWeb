@@ -30,7 +30,7 @@ data class User(
     suspend fun hasPermission(permission: String): Boolean {
         val permissions = mutableListOf(permission)
         while (permissions.last().replace(".*", "").contains('.')) {
-            permissions.add(permissions.last().substringBeforeLast('.') + ".*")
+            permissions.add(permissions.last().replace(".*", "").substringBeforeLast('.') + ".*")
         }
         return Database.dbQuery {
             Permissions.select {

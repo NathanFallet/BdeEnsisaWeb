@@ -9,5 +9,6 @@ import io.ktor.server.request.*
 fun Route.admin() {
     route("/admin") {
         adminDashboard()
+        adminPages()
     }
 }

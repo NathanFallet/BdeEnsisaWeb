@@ -9,7 +9,7 @@ data class Page(
     val url: String,
     val title: String?,
     val content: String?,
-    val isHome: Boolean?
+    val home: Boolean?
 ) {
 
     constructor(
@@ -19,7 +19,7 @@ data class Page(
         row[Pages.url],
         row.getOrNull(Pages.title),
         row.getOrNull(Pages.content),
-        row.getOrNull(Pages.isHome)
+        row.getOrNull(Pages.home)
     )
 
 }
@@ -30,7 +30,7 @@ object Pages : Table() {
     val url = varchar("url", 255)
     val title = text("title")
     val content = text("content")
-    val isHome = bool("is_home")
+    val home = bool("home")
 
     override val primaryKey = PrimaryKey(id)
 

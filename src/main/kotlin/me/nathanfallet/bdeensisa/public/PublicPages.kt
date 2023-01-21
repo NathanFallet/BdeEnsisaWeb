@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.publicPages() {
     get {
         Database.dbQuery {
-            Pages.select { Pages.isHome eq true }.firstOrNull()?.let {
+            Pages.select { Pages.home eq true }.firstOrNull()?.let {
                 call.respond(FreeMarkerContent(
                     "public/pages.ftl",
                     mapOf(

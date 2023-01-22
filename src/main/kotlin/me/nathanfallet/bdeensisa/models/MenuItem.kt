@@ -9,8 +9,9 @@ data class MenuItem(
     val id: String,
     val title: String,
     val url: String,
-    val parent: String?,
-    val children: List<MenuItem>
+    val position: Int = 0,
+    val parent: String? = null,
+    val children: List<MenuItem> = emptyList()
 ) {
 
     constructor(
@@ -20,6 +21,7 @@ data class MenuItem(
         row[MenuItems.id],
         row[MenuItems.title],
         row[MenuItems.url],
+        row[MenuItems.position],
         row.getOrNull(MenuItems.parent),
         children ?: emptyList()
     )
@@ -34,6 +36,7 @@ object MenuItems : Table() {
     val id = varchar("id", 32)
     val title = text("title")
     val url = varchar("url", 255)
+    val position = integer("position")
     val parent = varchar("parent", 32).nullable()
 
     override val primaryKey = PrimaryKey(id)
@@ -52,10 +55,10 @@ object MenuItems : Table() {
         return Database.dbQuery {
             MenuItems.select {
                 MenuItems.parent eq null
-            }.map { row ->
+            }.orderBy(MenuItems.position).map { row ->
                 MenuItem(row, MenuItems.select {
                     MenuItems.parent eq row[MenuItems.id]
-                }.map { MenuItem(it, null) })
+                }.orderBy(MenuItems.position).map { MenuItem(it, null) })
             }
         }
     }
@@ -64,13 +67,13 @@ object MenuItems : Table() {
         var items = mutableListOf<MenuItem>()
 
         if (user.hasPermission("admin.dashboard")) {
-            items.add(MenuItem("dashboard", "Tableau de bord", "/admin/dashboard", null, emptyList()))
+            items.add(MenuItem("dashboard", "Tableau de bord", "/admin/dashboard"))
         }
         if (user.hasPermission("admin.menu.view")) {
-            items.add(MenuItem("menu", "Menu", "/admin/menu", null, emptyList()))
+            items.add(MenuItem("menu", "Menu", "/admin/menu"))
         }
         if (user.hasPermission("admin.pages.view")) {
-            items.add(MenuItem("pages", "Pages", "/admin/pages", null, emptyList()))
+            items.add(MenuItem("pages", "Pages", "/admin/pages"))
         }
 
         return items

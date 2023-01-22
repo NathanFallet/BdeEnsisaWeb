@@ -149,5 +149,27 @@ fun Route.adminPages() {
                 call.respondRedirect("/account/login?redirect=/admin/pages")
             }
         }
+        get ("/{id}/delete") {
+            getUser()?.let { user ->
+                if (user.hasPermission("admin.pages.delete")) {
+                    call.parameters["id"]?.let { id ->
+                        Database.dbQuery {
+                            Pages.deleteWhere {
+                                Op.build { Pages.id eq id }
+                            }
+                        }
+                        call.respondRedirect("/admin/pages")
+                    } ?: run {
+                        call.response.status(HttpStatusCode.NotFound)
+                        call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                    }
+                } else {
+                    call.response.status(HttpStatusCode.Forbidden)
+                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                }
+            } ?: run {
+                call.respondRedirect("/account/login?redirect=/admin/pages")
+            }
+        }
     }
 }

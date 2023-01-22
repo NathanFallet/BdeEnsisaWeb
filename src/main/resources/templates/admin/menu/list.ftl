@@ -18,6 +18,7 @@
                   <th>Id</th>
                   <th>Titre</th>
                   <th>URL</th>
+                  <th>Position</th>
                   <th>Parent</th>
                 </tr>
               </thead>
@@ -32,6 +33,9 @@
                   </td>
                   <td class="font-weight-bold">
                     <span class="my-2 text-xs"><a href="${item.url}">${item.url}</a></span>
+                  </td>
+                  <td class="font-weight-bold">
+                    <span class="my-2 text-xs">${item.position}</span>
                   </td>
                   <td class="font-weight-bold">
                     <span class="my-2 text-xs"><#if item.parent??><a href="/admin/menu/${item.parent}">${item.parent}</a><#else>Pas de parent</#if></span>

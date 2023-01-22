@@ -41,7 +41,10 @@
             
             <div class="d-flex justify-content-end mt-4">
                 <a class="btn btn-light m-0" href="/admin/pages">Annuler</a>
-                <input type="submit" class="btn bg-gradient-primary m-0 ms-2" value="<#if page??>Modifier<#else>Créer</#if> la page">
+                <#if page??>
+                <a class="btn btn-danger m-0 ms-2" href="/admin/pages/${page.id}/delete">Supprimer</a>
+                </#if>
+                <input type="submit" class="btn bg-gradient-primary m-0 ms-2" value="<#if page??>Modifier<#else>Créer</#if>">
             </div>
         </form>
     </div>

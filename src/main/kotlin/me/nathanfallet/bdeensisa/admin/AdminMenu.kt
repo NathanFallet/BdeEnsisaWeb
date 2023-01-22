@@ -18,7 +18,7 @@ fun Route.adminMenu() {
             getUser()?.let { user ->
                 if (user.hasPermission("admin.menu.view")) {
                     val menu = Database.dbQuery {
-                        MenuItems.selectAll().map { MenuItem(it) }
+                        MenuItems.selectAll().orderBy(MenuItems.position).map { MenuItem(it) }
                     }
                     call.respond(FreeMarkerContent("admin/menu/list.ftl", mapOf(
                         "title" to "Menu",
@@ -60,13 +60,15 @@ fun Route.adminMenu() {
                     val params = call.receiveParameters()
                     val title = params["title"]
                     val url = params["url"]
+                    val position = params["position"]
                     val parent = params["parent"]
-                    if (title != null && url != null) {
+                    if (title != null && url != null && position != null) {
                         Database.dbQuery {
                             MenuItems.insert {
                                 it[MenuItems.id] = MenuItems.generateId()
                                 it[MenuItems.title] = title
                                 it[MenuItems.url] = url
+                                it[MenuItems.position] = position.toInt()
                                 it[MenuItems.parent] = parent?.let { if (it == "") null else it }
                             }
                         }
@@ -127,12 +129,14 @@ fun Route.adminMenu() {
                             val params = call.receiveParameters()
                             val title = params["title"]
                             val url = params["url"]
+                            val position = params["position"]
                             val parent = params["parent"]
-                            if (title != null && url != null) {
+                            if (title != null && url != null && position != null) {
                                 Database.dbQuery {
                                     MenuItems.update({ MenuItems.id eq item.id }) {
                                         it[MenuItems.title] = title
                                         it[MenuItems.url] = url
+                                        it[MenuItems.position] = position.toInt()
                                         it[MenuItems.parent] = parent?.let { if (it == "") null else it }
                                     }
                                 }
@@ -145,6 +149,28 @@ fun Route.adminMenu() {
                             call.response.status(HttpStatusCode.NotFound)
                             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                         }
+                    } ?: run {
+                        call.response.status(HttpStatusCode.NotFound)
+                        call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                    }
+                } else {
+                    call.response.status(HttpStatusCode.Forbidden)
+                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                }
+            } ?: run {
+                call.respondRedirect("/account/login?redirect=/admin/menu")
+            }
+        }
+        get ("/{id}/delete") {
+            getUser()?.let { user ->
+                if (user.hasPermission("admin.menu.delete")) {
+                    call.parameters["id"]?.let { id ->
+                        Database.dbQuery {
+                            MenuItems.deleteWhere {
+                                Op.build { MenuItems.id eq id }
+                            }
+                        }
+                        call.respondRedirect("/admin/menu")
                     } ?: run {
                         call.response.status(HttpStatusCode.NotFound)
                         call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))

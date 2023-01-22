@@ -1,9 +1,11 @@
 # Website of ENSISA's BDE
 
+The new website, built with Kotlin and Ktor.
+
 ## Start the server
 
 ```bash
-$ mvn install exec:java
+mvn install exec:java
 ```
 
 Then, go to `http://127.0.0.1:8080`.

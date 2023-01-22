@@ -147,6 +147,11 @@
             <version>${ktor_version}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.g0dkar</groupId>
+            <artifactId>qrcode-kotlin-jvm</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-tests-jvm</artifactId>
             <version>${ktor_version}</version>

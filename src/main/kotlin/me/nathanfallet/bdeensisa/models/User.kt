@@ -12,11 +12,13 @@ data class User(
     val firstName: String?,
     val lastName: String?,
     val option: String?,
-    val year: String?
+    val year: String?,
+    val cotisant: Cotisant? = null
 ) {
 
     constructor(
-        row: ResultRow
+        row: ResultRow,
+        cotisant: Cotisant? = null
     ) : this(
         row[Users.id],
         row.getOrNull(Users.email),
@@ -24,7 +26,8 @@ data class User(
         row.getOrNull(Users.firstName),
         row.getOrNull(Users.lastName),
         row.getOrNull(Users.option),
-        row.getOrNull(Users.year)
+        row.getOrNull(Users.year),
+        cotisant
     )
 
     suspend fun hasPermission(permission: String): Boolean {
@@ -39,6 +42,19 @@ data class User(
             }.count() > 0
         }
     }
+
+    val description: String
+        get() = {
+            val optionStr = when(option) {
+                "ir" -> "Informatique et Réseaux"
+                "ase" -> "Automatique et Systèmes embarqués"
+                "meca" -> "Mécanique"
+                "tf" -> "Textile et Fibres"
+                "gi" -> "Génie Industriel"
+                else -> "Inconnu"
+            }
+            year + " - " + optionStr
+        }()
 
 }
 

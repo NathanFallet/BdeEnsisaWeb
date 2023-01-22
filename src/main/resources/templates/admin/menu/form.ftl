@@ -6,7 +6,7 @@
         <p class="text-sm mb-0"><#if item??>Modifier un<#else>Créer un nouvel</#if> élément sur le menu du site</p>
         <hr class="horizontal dark my-3">
 
-        <form method="post" id="form">
+        <form method="post">
             <label for="title" class="form-label">Titre de l'élément</label>
             <input type="text" class="form-control" name="title" id="title" <#if item??>value="${item.title}"</#if>>
 
@@ -34,13 +34,4 @@
         </form>
     </div>
 </div>
-<script src="/js/plugins/quill.min.js"></script>
-<script>
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-    quill.on('text-change', function(delta, oldDelta, source) {
-        document.getElementById('hidden-content').innerHTML = quill.container.firstChild.innerHTML;
-    });
-</script>
 </@template.page>

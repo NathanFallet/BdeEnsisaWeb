@@ -1,6 +1,6 @@
 package me.nathanfallet.bdeensisa.models
 
-import kotlinx.datetime.Instant
+import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 
@@ -9,8 +9,8 @@ data class Event(
     val id: String,
     val title: String?,
     val content: String?,
-    val start: Instant?,
-    val end: Instant?,
+    val start: LocalDate?,
+    val end: LocalDate?,
     val topicId: String?,
     val topic: Topic? = null
 ) {
@@ -22,8 +22,8 @@ data class Event(
         row[Events.id],
         row.getOrNull(Events.title),
         row.getOrNull(Events.content),
-        row.getOrNull(Events.start)?.let { Instant.parse(it) },
-        row.getOrNull(Events.end)?.let { Instant.parse(it) },
+        row.getOrNull(Events.start)?.toLocalDate(),
+        row.getOrNull(Events.end)?.toLocalDate(),
         row.getOrNull(Events.topicId),
         topic
     )

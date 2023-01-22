@@ -1,13 +1,14 @@
 package me.nathanfallet.bdeensisa.models
 
-import kotlinx.datetime.Instant
+import java.time.format.DateTimeFormatter
+import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 
 @Serializable
 data class Cotisant(
     val userId: String,
-    val expiration: Instant,
+    val expiration: LocalDate,
     val user: User? = null
 ) {
 
@@ -16,9 +17,14 @@ data class Cotisant(
         user: User? = null
     ): this(
         row[Cotisants.userId],
-        Instant.parse(row[Cotisants.expiration]),
+        row[Cotisants.expiration].toLocalDate(),
         user
     )
+
+    val formatted: String
+        get() = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(
+            expiration.toJavaLocalDate()
+        )
 
 }
 

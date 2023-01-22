@@ -5,14 +5,14 @@
       <span class="mask bg-gradient-dark opacity-6"></span>
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-lg-4 col-md-7">
+          <div class="col-lg-6 col-md-7">
             <div class="card border-0 mb-0">
-              <div class="card-body px-lg-5">
+              <div class="card-body">
                 <div class="text-center text-muted mb-4">
                   <h5 class="text-dark text-center mt-2 mb-3">Connexion</h5>
                 </div>
                 <#if error??>
-                  <div class="alert alert-danger" role="alert">${error}</div>
+                  <div class="alert alert-danger text-white" role="alert">${error}</div>
                 </#if>
                 <form method="post" class="text-start">
                   <div class="mb-3">

@@ -75,6 +75,9 @@ object MenuItems : Table() {
         if (user.hasPermission("admin.pages.view")) {
             items.add(MenuItem("pages", "Pages", "/admin/pages"))
         }
+        if (user.hasPermission("admin.users.view")) {
+            items.add(MenuItem("users", "Utilisateurs", "/admin/users"))
+        }
 
         return items
     }

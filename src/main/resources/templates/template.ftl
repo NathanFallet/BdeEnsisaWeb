@@ -73,25 +73,25 @@
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse  w-auto h-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
+        <#list menu as item>
         <li class="nav-item">
-          <a class="nav-link">
-            <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
-              <i class="ni ni-ungroup text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Pages</span>
+          <a class="nav-link" href="${item.url}">
+            <span class="nav-link-text ms-1">${item.title}</span>
           </a>
           <div class="collapse show">
             <ul class="nav ms-4">
-              <li class="nav-item ">
-                <a class="nav-link " href="/pages/home">
-                  <span class="sidenav-mini-icon"> A </span>
-                  <span class="sidenav-normal"> Accueil </span>
+              <#list item.children as child>
+              <li class="nav-item">
+                <a class="nav-link" href="${child.url}">
+                  <span class="sidenav-mini-icon"> ${child.short}</span>
+                  <span class="sidenav-normal"> ${child.title}</span>
                 </a>
               </li>
-              
+              </#list>
             </ul>
           </div>
         </li>
+        </#list>
       </ul>
     </div>
   </aside>

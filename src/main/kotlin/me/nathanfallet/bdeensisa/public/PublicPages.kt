@@ -9,6 +9,7 @@ import io.ktor.server.freemarker.FreeMarkerContent
 import io.ktor.http.HttpStatusCode
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.Pages
+import me.nathanfallet.bdeensisa.models.MenuItems
 import org.jetbrains.exposed.sql.*
 
 fun Route.publicPages() {
@@ -19,7 +20,8 @@ fun Route.publicPages() {
                     "public/pages.ftl",
                     mapOf(
                         "title" to it[Pages.title],
-                        "content" to it[Pages.content]
+                        "content" to it[Pages.content],
+                        "menu" to MenuItems.fetch()
                     )
                 ))
             } ?: run {
@@ -36,7 +38,8 @@ fun Route.publicPages() {
                         "public/pages.ftl",
                         mapOf(
                             "title" to it[Pages.title],
-                            "content" to it[Pages.content]
+                            "content" to it[Pages.content],
+                            "menu" to MenuItems.fetch()
                         )
                     ))
                 } ?: run {

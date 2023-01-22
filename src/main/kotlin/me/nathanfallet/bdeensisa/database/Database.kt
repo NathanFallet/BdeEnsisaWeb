@@ -20,6 +20,7 @@ object Database {
             user, password
         )
         transaction(database) {
+            SchemaUtils.create(MenuItems)
             SchemaUtils.create(Users)
             SchemaUtils.create(Cotisants)
             SchemaUtils.create(Permissions)

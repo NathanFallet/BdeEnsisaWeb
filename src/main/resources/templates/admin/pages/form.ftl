@@ -2,7 +2,7 @@
 <@template.page>
 <div class="container-fluid py-4">
     <div class="card card-body mt-4">
-        <h6 class="mb-0"><#if page??>Modifier la page<#else>Nouvelle page</#if></h6>
+        <h6 class="mb-0"><#if page??>Modifier la<#else>Nouvelle</#if> page</h6>
         <p class="text-sm mb-0"><#if page??>Modifier une<#else>Créer une nouvelle</#if> page statique sur le site</p>
         <hr class="horizontal dark my-3">
 

@@ -12,17 +12,17 @@ import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
 import org.jetbrains.exposed.sql.*
 
-fun Route.adminPages() {
-    route("/pages") {
+fun Route.adminMenu() {
+    route("/menu") {
         get {
             getUser()?.let { user ->
-                if (user.hasPermission("admin.pages.view")) {
-                    val pages = Database.dbQuery {
-                        Pages.selectAll().map { Page(it) }
+                if (user.hasPermission("admin.menu.view")) {
+                    val menu = Database.dbQuery {
+                        MenuItems.selectAll().map { MenuItem(it) }
                     }
-                    call.respond(FreeMarkerContent("admin/pages/list.ftl", mapOf(
-                        "title" to "Pages",
-                        "pages" to pages,
+                    call.respond(FreeMarkerContent("admin/menu/list.ftl", mapOf(
+                        "title" to "Menu",
+                        "menuitems" to menu,
                         "menu" to MenuItems.fetchAdmin(user)
                     )))
                 } else {
@@ -30,43 +30,47 @@ fun Route.adminPages() {
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 }
             } ?: run {
-                call.respondRedirect("/account/login?redirect=/admin/pages")
+                call.respondRedirect("/account/login?redirect=/admin/menu")
             }
         }
         get ("/new") {
             getUser()?.let { user ->
-                if (user.hasPermission("admin.pages.new")) {
-                    call.respond(FreeMarkerContent("admin/pages/form.ftl", mapOf(
-                        "title" to "Nouvelle page",
-                        "menu" to MenuItems.fetchAdmin(user)
+                if (user.hasPermission("admin.menu.new")) {
+                    val parents = Database.dbQuery {
+                        MenuItems.select {
+                            MenuItems.parent eq null
+                        }.map { MenuItem(it) }
+                    }
+                    call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
+                        "title" to "Nouvel élément de menu",
+                        "menu" to MenuItems.fetchAdmin(user),
+                        "parents" to parents
                     )))
                 } else {
                     call.response.status(HttpStatusCode.Forbidden)
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 }
             } ?: run {
-                call.respondRedirect("/account/login?redirect=/admin/pages")
+                call.respondRedirect("/account/login?redirect=/admin/menu")
             }
         }
         post ("/new") {
             getUser()?.let { user ->
-                if (user.hasPermission("admin.pages.new")) {
+                if (user.hasPermission("admin.menu.new")) {
                     val params = call.receiveParameters()
-                    val url = params["url"]
                     val title = params["title"]
-                    val content = params["content"]
-                    val home = params["home"] == "on"
-                    if (url != null && title != null && content != null) {
+                    val url = params["url"]
+                    val parent = params["parent"]
+                    if (title != null && url != null) {
                         Database.dbQuery {
-                            Pages.insert {
-                                it[Pages.id] = Pages.generateId()
-                                it[Pages.url] = url
-                                it[Pages.title] = title
-                                it[Pages.content] = content
-                                it[Pages.home] = home
+                            MenuItems.insert {
+                                it[MenuItems.id] = MenuItems.generateId()
+                                it[MenuItems.title] = title
+                                it[MenuItems.url] = url
+                                it[MenuItems.parent] = parent?.let { if (it == "") null else it }
                             }
                         }
-                        call.respondRedirect("/admin/pages")
+                        call.respondRedirect("/admin/menu")
                     } else {
                         call.response.status(HttpStatusCode.BadRequest)
                         call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
@@ -76,20 +80,26 @@ fun Route.adminPages() {
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 }
             } ?: run {
-                call.respondRedirect("/account/login?redirect=/admin/pages")
+                call.respondRedirect("/account/login?redirect=/admin/menu")
             }
         }
         get ("/{id}") {
             getUser()?.let { user ->
-                if (user.hasPermission("admin.pages.edit")) {
+                if (user.hasPermission("admin.menu.edit")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Pages.select { Pages.id eq id }.map { Page(it) }.singleOrNull()
-                        }?.let { page ->
-                            call.respond(FreeMarkerContent("admin/pages/form.ftl", mapOf(
+                            MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
+                        }?.let { item ->
+                            val parents = Database.dbQuery {
+                                MenuItems.select {
+                                    MenuItems.parent eq null
+                                }.map { MenuItem(it) }
+                            }
+                            call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
                                 "title" to "Modifier une page",
-                                "page" to page,
-                                "menu" to MenuItems.fetchAdmin(user)
+                                "item" to item,
+                                "menu" to MenuItems.fetchAdmin(user),
+                                "parents" to parents
                             )))
                         } ?: run {
                             call.response.status(HttpStatusCode.NotFound)
@@ -104,31 +114,29 @@ fun Route.adminPages() {
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 }
             } ?: run {
-                call.respondRedirect("/account/login?redirect=/admin/pages")
+                call.respondRedirect("/account/login?redirect=/admin/menu")
             }
         }
         post ("/{id}") {
             getUser()?.let { user ->
-                if (user.hasPermission("admin.pages.edit")) {
+                if (user.hasPermission("admin.menu.edit")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Pages.select { Pages.id eq id }.map { Page(it) }.singleOrNull()
-                        }?.let { page ->
+                            MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
+                        }?.let { item ->
                             val params = call.receiveParameters()
-                            val url = params["url"]
                             val title = params["title"]
-                            val content = params["content"]
-                            val home = params["home"] == "on"
-                            if (url != null && title != null && content != null) {
+                            val url = params["url"]
+                            val parent = params["parent"]
+                            if (title != null && url != null) {
                                 Database.dbQuery {
-                                    Pages.update({ Pages.id eq page.id }) {
-                                        it[Pages.url] = url
-                                        it[Pages.title] = title
-                                        it[Pages.content] = content
-                                        it[Pages.home] = home
+                                    MenuItems.update({ MenuItems.id eq item.id }) {
+                                        it[MenuItems.title] = title
+                                        it[MenuItems.url] = url
+                                        it[MenuItems.parent] = parent?.let { if (it == "") null else it }
                                     }
                                 }
-                                call.respondRedirect("/admin/pages")
+                                call.respondRedirect("/admin/menu")
                             } else {
                                 call.response.status(HttpStatusCode.BadRequest)
                                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
@@ -146,7 +154,7 @@ fun Route.adminPages() {
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 }
             } ?: run {
-                call.respondRedirect("/account/login?redirect=/admin/pages")
+                call.respondRedirect("/account/login?redirect=/admin/menu")
             }
         }
     }

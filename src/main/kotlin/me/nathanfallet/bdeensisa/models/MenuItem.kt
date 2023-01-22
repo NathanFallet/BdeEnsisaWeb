@@ -67,7 +67,7 @@ object MenuItems : Table() {
         var items = mutableListOf<MenuItem>()
 
         if (user.hasPermission("admin.dashboard")) {
-            items.add(MenuItem("dashboard", "Tableau de bord", "/admin/dashboard"))
+            items.add(MenuItem("dashboard", "Tableau de bord", "/admin"))
         }
         if (user.hasPermission("admin.menu.view")) {
             items.add(MenuItem("menu", "Menu", "/admin/menu"))

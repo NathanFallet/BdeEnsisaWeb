@@ -37,7 +37,7 @@ data class User(
         }
         return Database.dbQuery {
             Permissions.select {
-                (Permissions.userId eq id) and
+                Permissions.userId eq id and
                 (Permissions.permission inList permissions)
             }.count() > 0
         }

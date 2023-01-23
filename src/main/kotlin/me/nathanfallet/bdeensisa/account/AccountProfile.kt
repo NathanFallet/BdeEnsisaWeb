@@ -17,7 +17,7 @@ fun Route.accountProfile() {
         getUser()?.let { user ->
             val cotisant = Database.dbQuery {
                 Cotisants.select {
-                    (Cotisants.userId eq user.id) and (Cotisants.expiration greater Clock.System.now().toString())
+                    Cotisants.userId eq user.id and (Cotisants.expiration greater Clock.System.now().toString())
                 }.map { Cotisant(it) }.singleOrNull()
             }
             call.respond(FreeMarkerContent(

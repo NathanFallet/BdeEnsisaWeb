@@ -1,5 +1,7 @@
 package me.nathanfallet.bdeensisa.models
 
+import java.time.format.DateTimeFormatter
+import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 
@@ -9,6 +11,8 @@ data class Topic(
     val userId: String,
     val title: String?,
     val content: String?,
+    val createdAt: Instant?,
+    val validated: Boolean?,
     val user: User? = null
 ) {
 
@@ -20,8 +24,17 @@ data class Topic(
         row[Topics.userId],
         row.getOrNull(Topics.title),
         row.getOrNull(Topics.content),
+        row.getOrNull(Topics.createdAt)?.toInstant(),
+        row.getOrNull(Topics.validated),
         user
     )
+
+    val formatted: String
+        get() = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy 'à' hh:mm").format(
+            createdAt?.toLocalDateTime(
+                TimeZone.currentSystemDefault()
+            )?.toJavaLocalDateTime()
+        )
 
 }
 
@@ -31,7 +44,19 @@ object Topics : Table() {
     val userId = varchar("user_id", 32)
     val title = text("title")
     val content = text("content")
+    val createdAt = varchar("created_at", 255)
+    val validated = bool("validated")
 
     override val primaryKey = PrimaryKey(id)
+
+    fun generateId(): String {
+        val charPool: List<Char> = ('a'..'z') + ('0'..'9')
+        val candidate = List(32) { charPool.random() }.joinToString("")
+        if (select { Topics.id eq candidate }.count() > 0) {
+            return generateId()
+        } else {
+            return candidate
+        }
+    }
 
 }

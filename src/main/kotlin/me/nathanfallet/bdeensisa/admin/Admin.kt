@@ -12,5 +12,6 @@ fun Route.admin() {
         adminMenu()
         adminPages()
         adminUsers()
+        adminTopics()
     }
 }

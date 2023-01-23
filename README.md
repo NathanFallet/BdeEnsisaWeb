@@ -1,6 +1,13 @@
 # Website of ENSISA's BDE
 
-The new website, built with Kotlin and Ktor.
+[![License](https://img.shields.io/github/license/NathanFallet/BdeEnsisaWeb)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/NathanFallet/BdeEnsisaWeb)]()
+[![Pull Requests](https://img.shields.io/github/issues-pr/NathanFallet/BdeEnsisaWeb)]()
+[![Code Size](https://img.shields.io/github/languages/code-size/NathanFallet/BdeEnsisaWeb)]()
+[![CodeFactor](https://www.codefactor.io/repository/github/NathanFallet/BdeEnsisaWeb/badge)](https://www.codefactor.io/repository/github/NathanFallet/BdeEnsisaWeb)
+[![Open Source Helpers](https://www.codetriage.com/nathanfallet/bdeensisaweb/badges/users.svg)](https://www.codetriage.com/nathanfallet/bdeensisaweb)
+
+The new website, built with [Kotlin](https://kotlinlang.org) and [Ktor](https://ktor.io).
 
 ## Start the server
 
@@ -8,9 +15,11 @@ The new website, built with Kotlin and Ktor.
 mvn install exec:java
 ```
 
-Then, go to `http://127.0.0.1:8080`.
+Then, go to [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
 ## Environment variables
+
+Here is the list of environment variables used by the server:
 
 | Name          | Description         |
 | ------------- | ------------------- |

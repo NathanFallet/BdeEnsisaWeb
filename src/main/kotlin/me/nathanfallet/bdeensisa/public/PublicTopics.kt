@@ -27,7 +27,7 @@ fun Route.publicTopics() {
             ))
         }
         get("/{id}") {
-            
+
         }
     }
 }

@@ -30,7 +30,7 @@ data class Topic(
     )
 
     val formatted: String
-        get() = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy 'à' hh:mm").format(
+        get() = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy 'à' HH:mm").format(
             createdAt?.toLocalDateTime(
                 TimeZone.currentSystemDefault()
             )?.toJavaLocalDateTime()

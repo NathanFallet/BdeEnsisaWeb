@@ -1,4 +1,4 @@
-<#import "../template.ftl" as template>
+<#import "../../template.ftl" as template>
 <@template.page>
     <div class="container-fluid py-4">
         <div class="card">

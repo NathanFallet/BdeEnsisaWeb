@@ -19,19 +19,16 @@
                     Une affaire proposée par un utilisateur n'est pas validée par défaut.
                 </p>
                 <div class="form-check form-switch ms-1">
-                    <input class="form-check-input" type="checkbox" name="validated" id="validated" <#if page?? && topic.validated>checked</#if>>
+                    <input class="form-check-input" type="checkbox" name="validated" id="validated" <#if topic?? && topic.validated>checked</#if>>
                     <label class="form-check-label" for="validated"></label>
                 </div>
             </div>
 
-            <label class="mt-4">Contenu de l'affaire</label>
+            <label for="content" class="mt-4">Contenu de l'affaire</label>
             <p class="form-text text-muted text-xs ms-1">
                 Ce qui sera affichée sur la page de l'affaire
             </p>
-            <div id="editor">
-                <#if topic??>${topic.content}</#if>
-            </div>
-            <textarea name="content" class="d-none" id="hidden-content"></textarea>
+            <textarea name="content" id="content" class="form-control">${topic.content}</textarea>
             
             <div class="d-flex justify-content-end mt-4">
                 <a class="btn btn-light m-0" href="/admin/topics">Annuler</a>
@@ -43,13 +40,4 @@
         </form>
     </div>
 </div>
-<script src="/js/plugins/quill.min.js"></script>
-<script>
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-    quill.on('text-change', function(delta, oldDelta, source) {
-        document.getElementById('hidden-content').innerHTML = quill.container.firstChild.innerHTML;
-    });
-</script>
 </@template.page>

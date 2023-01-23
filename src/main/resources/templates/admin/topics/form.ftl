@@ -28,7 +28,7 @@
             <p class="form-text text-muted text-xs ms-1">
                 Ce qui sera affichée sur la page de l'affaire
             </p>
-            <textarea name="content" id="content" class="form-control">${topic.content}</textarea>
+            <textarea name="content" id="content" class="form-control"><#if topic??>${topic.content}</#if></textarea>
             
             <div class="d-flex justify-content-end mt-4">
                 <a class="btn btn-light m-0" href="/admin/topics">Annuler</a>

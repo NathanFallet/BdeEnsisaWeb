@@ -23,8 +23,19 @@ fun Route.adminDashboard() {
                 val cotisantsCount = Database.dbQuery {
                     Cotisants.select { Cotisants.expiration greater Clock.System.now().toString() }.count()
                 }
+                val lastCotisants = Database.dbQuery {
+                    Cotisants
+                        .join(Users, JoinType.INNER, Cotisants.userId, Users.id)
+                        .select { Cotisants.expiration greater Clock.System.now().toString() }
+                        .orderBy(Cotisants.updatedAt, SortOrder.DESC)
+                        .limit(5)
+                        .map { Cotisant(it, User(it)) }
+                }
                 val pagesCount = Database.dbQuery {
                     Pages.selectAll().count()
+                }
+                val topicsCount = Database.dbQuery {
+                    Topics.select { Topics.validated eq true }.count()
                 }
                 call.respond(FreeMarkerContent("admin/dashboard.ftl", mapOf(
                     "title" to "Tableau de bord",
@@ -32,7 +43,11 @@ fun Route.adminDashboard() {
                     "counts" to mapOf(
                         "users" to usersCount,
                         "cotisants" to cotisantsCount,
-                        "pages" to pagesCount
+                        "pages" to pagesCount,
+                        "topics" to topicsCount
+                    ),
+                    "tables" to mapOf(
+                        "cotisants" to lastCotisants
                     )
                 )))
             } else {

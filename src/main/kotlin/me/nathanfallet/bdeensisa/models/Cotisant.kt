@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.*
 data class Cotisant(
     val userId: String,
     val expiration: LocalDate,
+    val updatedAt: Instant,
     val user: User? = null
 ) {
 
@@ -18,6 +19,7 @@ data class Cotisant(
     ): this(
         row[Cotisants.userId],
         row[Cotisants.expiration].toLocalDate(),
+        row[Cotisants.updatedAt].toInstant(),
         user
     )
 
@@ -32,6 +34,7 @@ object Cotisants : Table() {
 
     val userId = varchar("user_id", 32)
     val expiration = varchar("expiration", 255)
+    val updatedAt = varchar("updated_at", 255)
 
     override val primaryKey = PrimaryKey(userId)
 

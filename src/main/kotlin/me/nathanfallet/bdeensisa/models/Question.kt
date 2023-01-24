@@ -6,13 +6,12 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 
 @Serializable
-data class Topic(
+data class Question(
     val id: String,
     val userId: String,
-    val title: String?,
     val content: String?,
+    val answer: String?,
     val createdAt: Instant?,
-    val validated: Boolean?,
     val user: User? = null
 ) {
 
@@ -20,12 +19,11 @@ data class Topic(
         row: ResultRow,
         user: User? = null
     ): this(
-        row[Topics.id],
-        row[Topics.userId],
-        row.getOrNull(Topics.title),
-        row.getOrNull(Topics.content),
-        row.getOrNull(Topics.createdAt)?.toInstant(),
-        row.getOrNull(Topics.validated),
+        row[Questions.id],
+        row[Questions.userId],
+        row.getOrNull(Questions.content),
+        row.getOrNull(Questions.answer),
+        row.getOrNull(Questions.createdAt)?.toInstant(),
         user
     )
 
@@ -38,14 +36,13 @@ data class Topic(
 
 }
 
-object Topics : Table() {
+object Questions : Table() {
 
     val id = varchar("id", 32)
     val userId = varchar("user_id", 32)
-    val title = text("title")
     val content = text("content")
+    val answer = text("answer").nullable()
     val createdAt = varchar("created_at", 255)
-    val validated = bool("validated")
 
     override val primaryKey = PrimaryKey(id)
 

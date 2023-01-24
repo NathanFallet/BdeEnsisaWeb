@@ -44,7 +44,7 @@ object MenuItems : Table() {
     fun generateId(): String {
         val charPool: List<Char> = ('a'..'z') + ('0'..'9')
         val candidate = List(32) { charPool.random() }.joinToString("")
-        if (select { MenuItems.id eq candidate }.count() > 0) {
+        if (select { id eq candidate }.count() > 0) {
             return generateId()
         } else {
             return candidate
@@ -80,6 +80,9 @@ object MenuItems : Table() {
         }
         if (user.hasPermission("admin.topics.view")) {
             items.add(MenuItem("topics", "Affaires", "/admin/topics"))
+        }
+        if (user.hasPermission("admin.questions.view")) {
+            items.add(MenuItem("questions", "Questions", "/admin/questions"))
         }
 
         return items

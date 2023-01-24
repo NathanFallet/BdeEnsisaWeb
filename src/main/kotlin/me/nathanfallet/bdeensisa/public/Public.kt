@@ -9,4 +9,5 @@ import io.ktor.server.request.*
 fun Route.public() {
     publicPages()
     publicTopics()
+    publicQuestions()
 }

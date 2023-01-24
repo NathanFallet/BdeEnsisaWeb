@@ -73,7 +73,7 @@ object Users : Table() {
     fun generateId(): String {
         val charPool: List<Char> = ('a'..'z') + ('0'..'9')
         val candidate = List(32) { charPool.random() }.joinToString("")
-        if (select { Users.id eq candidate }.count() > 0) {
+        if (select { id eq candidate }.count() > 0) {
             return generateId()
         } else {
             return candidate

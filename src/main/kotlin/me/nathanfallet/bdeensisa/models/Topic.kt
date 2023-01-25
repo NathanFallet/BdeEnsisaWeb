@@ -59,4 +59,13 @@ object Topics : Table() {
         }
     }
 
+    fun delete(id: String) {
+        Topics.deleteWhere {
+            Op.build { Topics.id eq id }
+        }
+        Events.select { Events.topicId eq id }.forEach {
+            Events.delete(it[Events.id])
+        }
+    }
+
 }

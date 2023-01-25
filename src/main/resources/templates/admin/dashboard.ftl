@@ -14,24 +14,8 @@
                 <div class="col-sm-6 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <p>Utilisateurs</p>
-                            <h3>${counts.users}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
                             <p>Cotisants</p>
                             <h3>${counts.cotisants}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <p>Pages</p>
-                            <h3>${counts.pages}</h3>
                         </div>
                     </div>
                 </div>
@@ -46,8 +30,16 @@
                 <div class="col-sm-6 mb-4">
                     <div class="card">
                         <div class="card-body">
+                            <p>Questions</p>
+                            <h3>${counts.questions}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
                             <p>Evènements</p>
-                            <h3>-</h3>
+                            <h3>${counts.events}</h3>
                         </div>
                     </div>
                 </div>
@@ -125,25 +117,14 @@
       selectable: true,
       editable: true,
       events: [
-        // TODO: Load real events
+        <#list calendar as event>
         {
-          title: 'Réunion BDE',
-          start: '2023-01-24',
-          end: '2023-01-24',
-          className: 'bg-gradient-success'
+          title: '${event.title}',
+          start: '${event.start}',
+          end: '${event.end}',
+          className: 'bg-gradient-primary'
         },
-        {
-          title: 'Réunion Gala',
-          start: '2023-01-25',
-          end: '2023-01-25',
-          className: 'bg-gradient-warning'
-        },
-        {
-          title: 'AG Budget',
-          start: '2023-01-30',
-          end: '2023-01-30',
-          className: 'bg-gradient-danger'
-        }
+        </#list>
       ],
       views: {
         month: {

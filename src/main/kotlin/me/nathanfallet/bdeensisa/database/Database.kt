@@ -27,7 +27,7 @@ object Database {
             SchemaUtils.create(Pages)
             SchemaUtils.create(Topics)
             SchemaUtils.create(Events)
-            SchemaUtils.create(Tickets)
+            //SchemaUtils.create(Tickets)
             SchemaUtils.create(Questions)
         }
     }

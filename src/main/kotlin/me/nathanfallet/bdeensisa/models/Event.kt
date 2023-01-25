@@ -1,5 +1,6 @@
 package me.nathanfallet.bdeensisa.models
 
+import java.time.format.DateTimeFormatter
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -28,6 +29,23 @@ data class Event(
         topic
     )
 
+    val formatted: String
+        get() = {
+            if (end != start) {
+                val startStr = DateTimeFormatter.ofPattern("'Du' dd/MM/yyyy").format(
+                    start?.toJavaLocalDate()
+                )
+                val endStr = DateTimeFormatter.ofPattern("'au' dd/MM/yyyy").format(
+                    end?.toJavaLocalDate()
+                )
+                "$startStr $endStr"
+            } else {
+                DateTimeFormatter.ofPattern("'Le' dd/MM/yyyy").format(
+                    start?.toJavaLocalDate()
+                )
+            }
+        }()
+
 }
 
 object Events : Table() {
@@ -40,5 +58,22 @@ object Events : Table() {
     val topicId = varchar("topic_id", 32)
 
     override val primaryKey = PrimaryKey(id)
+
+    fun generateId(): String {
+        val charPool: List<Char> = ('a'..'z') + ('0'..'9')
+        val candidate = List(32) { charPool.random() }.joinToString("")
+        if (select { id eq candidate }.count() > 0) {
+            return generateId()
+        } else {
+            return candidate
+        }
+    }
+
+    fun delete(id: String) {
+        Events.deleteWhere {
+            Op.build { Events.id eq id }
+        }
+        // TODO: Delete associated tickets and configurations
+    }
 
 }

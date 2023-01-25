@@ -84,6 +84,9 @@ object MenuItems : Table() {
         if (user.hasPermission("admin.questions.view")) {
             items.add(MenuItem("questions", "Questions", "/admin/questions"))
         }
+        if (user.hasPermission("admin.events.view")) {
+            items.add(MenuItem("events", "Evènements", "/admin/events"))
+        }
 
         return items
     }

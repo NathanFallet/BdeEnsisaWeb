@@ -17,9 +17,6 @@ fun Route.adminDashboard() {
     get {
         getUser()?.let { user ->
             if (user.hasPermission("admin.dashboard")) {
-                val usersCount = Database.dbQuery {
-                    Users.selectAll().count()
-                }
                 val cotisantsCount = Database.dbQuery {
                     Cotisants.select { Cotisants.expiration greater Clock.System.now().toString() }.count()
                 }
@@ -31,24 +28,28 @@ fun Route.adminDashboard() {
                         .limit(5)
                         .map { Cotisant(it, User(it)) }
                 }
-                val pagesCount = Database.dbQuery {
-                    Pages.selectAll().count()
-                }
                 val topicsCount = Database.dbQuery {
                     Topics.select { Topics.validated eq true }.count()
+                }
+                val questionsCount = Database.dbQuery {
+                    Questions.selectAll().count()
+                }
+                val allEvents = Database.dbQuery {
+                    Events.selectAll().map { Event(it) }
                 }
                 call.respond(FreeMarkerContent("admin/dashboard.ftl", mapOf(
                     "title" to "Tableau de bord",
                     "menu" to MenuItems.fetchAdmin(user),
                     "counts" to mapOf(
-                        "users" to usersCount,
                         "cotisants" to cotisantsCount,
-                        "pages" to pagesCount,
-                        "topics" to topicsCount
+                        "topics" to topicsCount,
+                        "questions" to questionsCount,
+                        "events" to allEvents.size
                     ),
                     "tables" to mapOf(
                         "cotisants" to lastCotisants
-                    )
+                    ),
+                    "calendar" to allEvents
                 )))
             } else {
                 call.response.status(HttpStatusCode.Forbidden)

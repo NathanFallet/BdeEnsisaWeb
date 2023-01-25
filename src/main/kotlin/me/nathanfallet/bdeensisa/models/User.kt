@@ -13,7 +13,8 @@ data class User(
     val lastName: String?,
     val option: String?,
     val year: String?,
-    val cotisant: Cotisant? = null
+    val cotisant: Cotisant? = null,
+    var permissions: List<String>? = null
 ) {
 
     constructor(
@@ -31,16 +32,20 @@ data class User(
     )
 
     suspend fun hasPermission(permission: String): Boolean {
-        val permissions = mutableListOf(permission)
-        while (permissions.last().replace(".*", "").contains('.')) {
-            permissions.add(permissions.last().replace(".*", "").substringBeforeLast('.') + ".*")
+        // Cache permissions to avoid multiple queries
+        if (permissions == null) {
+            permissions = Database.dbQuery {
+                Permissions.select { Permissions.userId eq id }.map { it[Permissions.permission] }
+            }
         }
-        return Database.dbQuery {
-            Permissions.select {
-                Permissions.userId eq id and
-                (Permissions.permission inList permissions)
-            }.count() > 0
+
+        // Construct allowed permissions
+        // i.e. for "admin.users.view" we will check "admin.users.view", "admin.users.*" and "admin.*"
+        val allowedPermissions = mutableListOf(permission)
+        while (allowedPermissions.last().replace(".*", "").contains('.')) {
+            allowedPermissions.add(allowedPermissions.last().replace(".*", "").substringBeforeLast('.') + ".*")
         }
+        return permissions?.any { allowedPermissions.contains(it) } ?: false
     }
 
     val description: String

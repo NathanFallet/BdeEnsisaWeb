@@ -43,6 +43,7 @@
                       <span><#if question.answer??>Oui<#else>Non</#if></span>
                     </div>
                   </td>
+                </tr>
                 </#list>
               </tbody>
             </table>

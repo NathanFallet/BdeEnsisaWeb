@@ -15,5 +15,6 @@ fun Route.admin() {
         adminTopics()
         adminQuestions()
         adminEvents()
+        adminUploads()
     }
 }

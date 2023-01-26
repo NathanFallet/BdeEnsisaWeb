@@ -1,40 +1,28 @@
 <#import "../../template.ftl" as template>
 <@template.page>
 <div class="container-fluid py-4">
-    <div class="d-sm-flex justify-content-between">
-      <div>
-        <a href="/admin/events/new" class="btn btn-icon btn-outline-white">
-          Nouvel évènement
-        </a>
-      </div>
-    </div>
     <div class="row">
       <div class="col-12">
-        <div class="card">
+        <div class="card card-body">
+          <form action="/admin/uploads" class="form-control dropzone" id="dropzone">
+            <div class="fallback">
+              <input name="file" type="file" multiple />
+            </div>
+          </form>
+        </div>
+        <div class="card mt-4">
           <div class="table-responsive">
             <table class="table table-flush" id="datatable-search">
               <thead class="thead-light">
                 <tr>
-                  <th>Id</th>
-                  <th>Titre</th>
-                  <th>Date(s)</th>
-                  <th>Affaire</th>
+                  <th>Nom du fichier</th>
                 </tr>
               </thead>
               <tbody>
-                <#list events as event>
+                <#list uploads as upload>
                 <tr>
                   <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><a href="/admin/events/${event.id}">${event.id}</a></span>
-                  </td>
-                  <td class="font-weight-bold">
-                    <span class="my-2 text-xs">${event.title}</span>
-                  </td>
-                  <td class="font-weight-bold">
-                    <span class="my-2 text-xs">${event.formatted}</span>
-                  </td>
-                  <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><a href="/admin/topics/${event.topic.id}">${event.topic.title}</a></span>
+                    <span class="my-2 text-xs"><a href="/${upload}">${upload}</a></span>
                   </td>
                 </tr>
                 </#list>
@@ -48,11 +36,18 @@
   <script src="/js/plugins/dragula/dragula.min.js"></script>
   <script src="/js/plugins/jkanban/jkanban.js"></script>
   <script src="/js/plugins/datatables.js"></script>
+  <script src="/js/plugins/dropzone.min.js"></script>
   <script>
     const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
       searchable: true,
       fixedHeight: false,
       perPageSelect: false
+    });
+    Dropzone.autoDiscover = false;
+    var drop = document.getElementById('dropzone')
+    var myDropzone = new Dropzone(drop, {
+      url: "/admin/uploads",
+      addRemoveLinks: true
     });
   </script>
 </@template.page>

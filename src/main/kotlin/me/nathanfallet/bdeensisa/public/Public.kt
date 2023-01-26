@@ -11,4 +11,5 @@ fun Route.public() {
     publicTopics()
     publicQuestions()
     publicEvents()
+    publicUploads()
 }

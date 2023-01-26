@@ -87,6 +87,9 @@ object MenuItems : Table() {
         if (user.hasPermission("admin.events.view")) {
             items.add(MenuItem("events", "Evènements", "/admin/events"))
         }
+        if (user.hasPermission("admin.uploads.view")) {
+            items.add(MenuItem("uploads", "Téléchargements", "/admin/uploads"))
+        }
 
         return items
     }

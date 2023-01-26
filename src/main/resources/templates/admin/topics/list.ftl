@@ -43,6 +43,7 @@
                       <span><#if topic.validated>Oui<#else>Non</#if></span>
                     </div>
                   </td>
+                </tr>
                 </#list>
               </tbody>
             </table>

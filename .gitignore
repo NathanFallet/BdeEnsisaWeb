@@ -39,6 +39,9 @@ out/
 ### VS Code ###
 .vscode/
 
-### Keys
+### Keys ###
 *.pem
 *.p8
+
+### Uploaded files ###
+/uploads/

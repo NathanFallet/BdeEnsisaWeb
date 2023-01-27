@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
                 <h3 class="mb-4">${title}</h3>
-                <p>${content}</p>
+                ${content}
             </div>
         </div>
     </div>

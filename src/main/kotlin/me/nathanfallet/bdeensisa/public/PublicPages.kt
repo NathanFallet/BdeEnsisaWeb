@@ -11,6 +11,12 @@ import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
 import org.jetbrains.exposed.sql.*
 
+fun processPage(content: String): String {
+    return content
+        .replace("<p><br></p>", "")
+        .replace("<img src=", "<img class=\"img-fluid rounded mx-auto d-block\" src=")
+}
+
 fun Route.publicPages() {
     get {
         Database.dbQuery {
@@ -20,7 +26,7 @@ fun Route.publicPages() {
                 "public/pages/view.ftl",
                 mapOf(
                     "title" to page.title,
-                    "content" to page.content,
+                    "content" to processPage(page.content ?: ""),
                     "menu" to MenuItems.fetch()
                 )
             ))
@@ -38,7 +44,7 @@ fun Route.publicPages() {
                     "public/pages/view.ftl",
                     mapOf(
                         "title" to page.title,
-                        "content" to page.content,
+                        "content" to processPage(page.content ?: ""),
                         "menu" to MenuItems.fetch()
                     )
                 ))

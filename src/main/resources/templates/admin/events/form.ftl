@@ -43,7 +43,11 @@
 <script>
     if (document.querySelector('.datetimepicker')) {
       flatpickr('.datetimepicker', {
-        allowInput: true
+        allowInput: true,
+        enableTime: true,
+        dateFormat: "Z",
+        altInput: true,
+        altFormat: "d/m/Y à H:i",
       }); // flatpickr
     }
 </script>

@@ -32,48 +32,22 @@
 <script>
     var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
       contentHeight: 'auto',
-      initialView: "dayGridMonth",
       headerToolbar: {
-        start: 'title', // will normally be on the left. if RTL, will be on the right
-        center: '',
-        end: 'today prev,next' // will normally be on the right. if RTL, will be on the left
+        start: 'today prev,next',
+        center: 'title',
+        end: 'dayGridMonth,dayGridWeek,timeGridDay'
       },
       selectable: true,
-      editable: true,
       events: [
         <#list calendar as event>
         {
           title: '${event.title}',
           start: '${event.start}',
-          end: '${event.end}',
-          className: 'bg-gradient-primary'
+          end: '${event.end}'
         },
         </#list>
-      ],
-      views: {
-        month: {
-          titleFormat: {
-            month: "long",
-            year: "numeric"
-          }
-        },
-        agendaWeek: {
-          titleFormat: {
-            month: "long",
-            year: "numeric",
-            day: "numeric"
-          }
-        },
-        agendaDay: {
-          titleFormat: {
-            month: "short",
-            year: "numeric",
-            day: "numeric"
-          }
-        }
-      },
+      ]
     });
-
     calendar.render();
 </script>
 </@template.page>

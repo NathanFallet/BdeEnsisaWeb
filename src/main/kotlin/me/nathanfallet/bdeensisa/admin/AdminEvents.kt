@@ -63,8 +63,8 @@ fun Route.adminEvents() {
                     val params = call.receiveParameters()
                     val title = params["title"]
                     val content = params["content"]
-                    val start = params["start"]?.toLocalDate()
-                    val end = params["end"]?.toLocalDate()
+                    val start = params["start"]?.toInstant()
+                    val end = params["end"]?.toInstant()
                     val topic = params["topic"]
                     if (title != null && content != null && start != null && end != null && topic != null) {
                         Database.dbQuery {
@@ -132,8 +132,8 @@ fun Route.adminEvents() {
                         val params = call.receiveParameters()
                         val title = params["title"]
                         val content = params["content"]
-                        val start = params["start"]?.toLocalDate()
-                        val end = params["end"]?.toLocalDate()
+                        val start = params["start"]?.toInstant()
+                        val end = params["end"]?.toInstant()
                         val topic = params["topic"]
                         if (title != null && content != null && start != null && end != null && topic != null) {
                             Database.dbQuery {

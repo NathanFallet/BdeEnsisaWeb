@@ -50,7 +50,7 @@ fun Route.publicPages() {
                 ))
             } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Aucune page d'accueil trouvée")))
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             }
         } ?: run {
             call.response.status(HttpStatusCode.NotFound)

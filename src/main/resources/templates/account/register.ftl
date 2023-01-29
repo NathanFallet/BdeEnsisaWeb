@@ -14,7 +14,11 @@
                 <#if error??>
                   <div class="alert alert-danger text-white" role="alert">${error}</div>
                 </#if>
+                <#if success??>
+                  <div class="alert alert-success" role="alert">${success}</div>
+                </#if>
                 <form method="post" class="text-start">
+                  <#if request??>
                     <div class="row">
                         <div class="col-6">
                             <div class="mb-3">
@@ -28,7 +32,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                      <input type="email" class="form-control" name="email" placeholder="Email" aria-label="Email" required>
+                      <input type="email" class="form-control" name="email" placeholder="Email" aria-label="Email" value="${request.email}" disabled>
                     </div>
                     <div class="row">
                         <div class="col-4">
@@ -59,6 +63,15 @@
                     <div class="mb-3">
                       <input type="password" class="form-control" name="password2" placeholder="Mot de passe" aria-label="Mot de passe" required>
                     </div>
+                  <#else>
+                    <p>
+                      Entrez votre adresse mail UHA pour vous inscrire. Un mail vous sera envoyé avec un lien afin de créer votre compte.
+                    </p>
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" name="email" id="email" aria-describedby="email-suffix" required>
+                      <span class="input-group-text" id="email-suffix">@uha.fr</span>
+                    </div>
+                  </#if>
                     <div class="text-center">
                       <input type="submit" class="btn btn-primary w-100 my-4 mb-2" value="Inscription">
                     </div>

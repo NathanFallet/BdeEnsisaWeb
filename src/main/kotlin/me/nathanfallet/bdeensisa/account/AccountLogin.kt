@@ -14,31 +14,27 @@ import org.jetbrains.exposed.sql.*
 
 fun Route.accountLogin() {
     get("/login") {
-        call.respond(
-                FreeMarkerContent(
-                        "account/login.ftl",
-                        mapOf(
-                                "title" to "Connexion",
-                                "redirect" to call.request.queryParameters["redirect"]
-                        )
-                )
-        )
+        call.respond(FreeMarkerContent(
+            "account/login.ftl",
+            mapOf(
+                "title" to "Connexion",
+                "redirect" to call.request.queryParameters["redirect"]
+            )
+        ))
     }
     post("/login") {
         val params = call.receiveParameters()
         val email = params["email"]
         val password = params["password"]
         if (email == null || password == null) {
-            call.respond(
-                    FreeMarkerContent(
-                            "account/login.ftl",
-                            mapOf(
-                                    "title" to "Connexion",
-                                    "error" to "Email ou mot de passe invalide !",
-                                    "redirect" to call.request.queryParameters["redirect"]
-                            )
-                    )
-            )
+            call.respond(FreeMarkerContent(
+                "account/login.ftl",
+                mapOf(
+                    "title" to "Connexion",
+                    "error" to "Email ou mot de passe invalide !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
             return@post
         }
         Database.dbQuery { Users.select { Users.email eq email }.map { User(it) }.singleOrNull() }
@@ -46,18 +42,15 @@ fun Route.accountLogin() {
                 ?.let {
                     call.sessions.set(AccountSession(it.id))
                     call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
-                }
-                ?: run {
-                    call.respond(
-                            FreeMarkerContent(
-                                    "account/login.ftl",
-                                    mapOf(
-                                            "title" to "Connexion",
-                                            "error" to "Email ou mot de passe invalide !",
-                                            "redirect" to call.request.queryParameters["redirect"]
-                                    )
-                            )
-                    )
+                } ?: run {
+                    call.respond(FreeMarkerContent(
+                        "account/login.ftl",
+                        mapOf(
+                            "title" to "Connexion",
+                            "error" to "Email ou mot de passe invalide !",
+                            "redirect" to call.request.queryParameters["redirect"]
+                        )
+                    ))
                 }
     }
 }

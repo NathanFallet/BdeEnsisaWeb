@@ -15,4 +15,5 @@ fun Application.module() {
     configureSecurity()
     configureSessions()
     configureRouting()
+    configureEmails()
 }

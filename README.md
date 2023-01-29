@@ -21,10 +21,11 @@ Then, go to [http://127.0.0.1:8068/](http://127.0.0.1:8068/).
 
 Here is the list of environment variables used by the server:
 
-| Name          | Description         |
-| ------------- | ------------------- |
-| DB_HOST       | MySQL database host |
-| DB_NAME       | MySQL database name |
-| DB_USER       | MySQL user name     |
-| DB_PASSWORD   | MySQL user password |
-| JWT_SECRET    | Secret to sign JWTs |
+| Name           | Description             |
+| -------------- | ----------------------- |
+| DB_HOST        | MySQL database host     |
+| DB_NAME        | MySQL database name     |
+| DB_USER        | MySQL user name         |
+| DB_PASSWORD    | MySQL user password     |
+| EMAIL_PASSWORD | Password to send emails |
+| JWT_SECRET     | Secret to sign JWTs     |

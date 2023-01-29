@@ -15,7 +15,7 @@ The new website, built with [Kotlin](https://kotlinlang.org) and [Ktor](https://
 mvn install exec:java
 ```
 
-Then, go to [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
+Then, go to [http://127.0.0.1:8068/](http://127.0.0.1:8068/).
 
 ## Environment variables
 

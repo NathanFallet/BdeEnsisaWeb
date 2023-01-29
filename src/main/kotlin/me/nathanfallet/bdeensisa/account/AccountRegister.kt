@@ -11,6 +11,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.datetime.*
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.EmailsPlugin
 import org.jetbrains.exposed.sql.*
 
 fun Route.accountRegister() {
@@ -51,7 +52,7 @@ fun Route.accountRegister() {
         val email = "$raw_email@uha.fr"
         Database.dbQuery {
             Users.select { Users.email eq email }.map { User(it) }.singleOrNull() ?:
-            RegistrationRequests.select { RegistrationRequests.email eq email }.map { User(it) }.singleOrNull()
+            RegistrationRequests.select { RegistrationRequests.email eq email }.map { RegistrationRequest(it) }.singleOrNull()
         }?.let {
             call.respond(FreeMarkerContent(
                 "account/register.ftl",
@@ -71,6 +72,14 @@ fun Route.accountRegister() {
             }
             code
         }
+        EmailsPlugin.sendEmail(
+            email,
+            "Inscription sur le site du BDE de l'ENSISA",
+            "<p>Bienvenue &agrave; bord !<br/>" +
+            "Finalisez votre inscription en cliquant sur le lien suivant :</p>" +
+            "<p><a href='https://bde.ensisa.info/account/register/$code'>https://bde.ensisa.info/account/register/$code</a></p>" +
+            "<p>- L'&eacute;quipe du BDE de l'ENSISA</p>"
+        )
         call.respond(FreeMarkerContent(
             "account/register.ftl",
             mapOf(

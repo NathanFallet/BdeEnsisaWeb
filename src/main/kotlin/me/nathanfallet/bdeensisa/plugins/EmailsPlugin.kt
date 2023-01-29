@@ -9,9 +9,9 @@ object EmailsPlugin {
     lateinit var host: String
     lateinit var username: String
     lateinit var password: String
-    
+
     fun sendEmail(destination: String, subject: String, content: String) {
-        CoroutineScope(Job()).launch { 
+        CoroutineScope(Job()).launch {
             val email = HtmlEmail()
             email.hostName = host
             email.setSmtpPort(587)

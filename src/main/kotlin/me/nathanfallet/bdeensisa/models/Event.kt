@@ -10,8 +10,8 @@ data class Event(
     val id: String,
     val title: String?,
     val content: String?,
-    val start: LocalDate?,
-    val end: LocalDate?,
+    val start: Instant?,
+    val end: Instant?,
     val topicId: String?,
     val topic: Topic? = null
 ) {
@@ -23,8 +23,8 @@ data class Event(
         row[Events.id],
         row.getOrNull(Events.title),
         row.getOrNull(Events.content),
-        row.getOrNull(Events.start)?.toLocalDate(),
-        row.getOrNull(Events.end)?.toLocalDate(),
+        row.getOrNull(Events.start)?.toInstant(),
+        row.getOrNull(Events.end)?.toInstant(),
         row.getOrNull(Events.topicId),
         topic
     )
@@ -32,16 +32,22 @@ data class Event(
     val formatted: String
         get() = {
             if (end != start) {
-                val startStr = DateTimeFormatter.ofPattern("'Du' dd/MM/yyyy").format(
-                    start?.toJavaLocalDate()
+                val startStr = DateTimeFormatter.ofPattern("'Du' dd/MM/yyyy 'à' HH:mm").format(
+                    start?.toLocalDateTime(
+                        TimeZone.currentSystemDefault()
+                    )?.toJavaLocalDateTime()
                 )
-                val endStr = DateTimeFormatter.ofPattern("'au' dd/MM/yyyy").format(
-                    end?.toJavaLocalDate()
+                val endStr = DateTimeFormatter.ofPattern("'au' dd/MM/yyyy 'à' HH:mm").format(
+                    end?.toLocalDateTime(
+                        TimeZone.currentSystemDefault()
+                    )?.toJavaLocalDateTime()
                 )
                 "$startStr $endStr"
             } else {
-                DateTimeFormatter.ofPattern("'Le' dd/MM/yyyy").format(
-                    start?.toJavaLocalDate()
+                DateTimeFormatter.ofPattern("'Le' dd/MM/yyyy 'à' HH:mm").format(
+                    start?.toLocalDateTime(
+                        TimeZone.currentSystemDefault()
+                    )?.toJavaLocalDateTime()
                 )
             }
         }()

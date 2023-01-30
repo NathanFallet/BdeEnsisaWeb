@@ -81,29 +81,14 @@ fun Route.apiAuth() {
 suspend fun PipelineContext<Unit, ApplicationCall>.getUser(): User? {
     return call.principal<JWTPrincipal>()?.payload?.getSubject()?.let { userId ->
         Database.dbQuery {
-            Users
-                .join(
-                    Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
-                    additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
-                )
-                .slice(
-                    Users.id,
-                    Users.email,
-                    Users.firstName,
-                    Users.lastName,
-                    Users.option,
-                    Users.year,
-                    Cotisants.userId,
-                    Cotisants.expiration
-                )
-                .select { Users.id eq userId }.map {
-                    val permissions = Permissions.select {
-                        Permissions.userId eq userId
-                    }.map {
-                        it[Permissions.permission]
-                    }
-                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
-                }.singleOrNull()
+            Users.customJoin().select { Users.id eq userId }.map {
+                val permissions = Permissions.select {
+                    Permissions.userId eq userId
+                }.map {
+                    it[Permissions.permission]
+                }
+                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
+            }.singleOrNull()
         }
     }
 }

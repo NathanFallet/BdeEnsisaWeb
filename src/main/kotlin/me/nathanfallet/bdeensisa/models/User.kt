@@ -2,6 +2,7 @@ package me.nathanfallet.bdeensisa.models
 
 import kotlinx.serialization.Serializable
 import me.nathanfallet.bdeensisa.database.Database
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
 
 @Serializable
@@ -87,6 +88,23 @@ object Users : Table() {
         }
     }
 
+    fun customJoin(): FieldSet {
+        return join(
+            Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
+            additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
+        )
+        .slice(
+            Users.id,
+            Users.email,
+            Users.firstName,
+            Users.lastName,
+            Users.option,
+            Users.year,
+            Cotisants.userId,
+            Cotisants.expiration
+        )
+    }
+
 }
 
 @Serializable
@@ -98,4 +116,13 @@ data class UserAuthorize(
 data class UserToken(
     val token: String,
     val user: User
+)
+
+@Serializable
+data class UserUpload(
+    val firstName: String?,
+    val lastName: String?,
+    val year: String?,
+    val option: String?,
+    val expiration: String?
 )

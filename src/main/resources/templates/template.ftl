@@ -18,8 +18,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/logo_round.png">
+  <link rel="icon" type="image/png" href="/img/logo_round.png">
   <title>${title} - BDE de l'ENSISA</title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -66,12 +66,12 @@
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="/">
-        <img src="/img/logo.png" class="navbar-brand-img h-100" alt="main_logo">
+        <img src="/img/logo_round.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">BDE de l'ENSISA</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
-    <div class="collapse navbar-collapse  w-auto h-auto" id="sidenav-collapse-main">
+    <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <#list menu as item>
         <li class="nav-item">
@@ -94,19 +94,39 @@
         </#list>
       </ul>
     </div>
+    <hr class="horizontal dark">
+    <div class="sidenav-footer mx-3 my-3">
+      <div class="card card-plain shadow-none" id="sidenavCard">
+        <div class="card-body text-center p-3 w-100">
+          <div class="docs-info">
+            <h6>Besoin d'aide ?</h6>
+            <p class="text-xs font-weight-bold">Contactez le BDE :</p>
+          </div>
+        </div>
+      </div>
+      <a href="mailto:bde@ensisa.info" class="btn btn-dark btn-sm w-100 mb-3">bde@ensisa.info</a>
+      <a href="https://www.instagram.com/bdensisa" class="btn btn-instagram btn-sm w-100 mb-3">Instagram</a>
+      <a href="https://www.facebook.com/bdeensisa/" class="btn btn-facebook btn-sm w-100 mb-3">Facebook</a>
+    </div>
+    <hr class="horizontal dark">
+    <div class="sidenav-footer mx-3 my-3">
+      <div class="card card-plain shadow-none" id="sidenavCard">
+        <div class="card-body text-center p-3 w-100">
+          <div class="docs-info">
+            <h6>Un problème avec le site ou l'app ?</h6>
+          </div>
+        </div>
+      </div>
+      <a href="mailto:dev@ensisa.info" class="btn btn-dark btn-sm w-100 mb-3">dev@ensisa.info</a>
+      <a href="https://github.com/NathanFallet/BdeEnsisaWeb" class="btn btn-github btn-sm w-100 mb-3">GitHub</a>
+    </div>
   </aside>
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl z-index-sticky " id="navbarBlur" data-scroll="false">
       <div class="container-fluid py-1 px-3">
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            <div class="input-group">
-              <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" placeholder="Type here...">
-            </div>
-          </div>
-          <ul class="navbar-nav  justify-content-end">
+          <ul class="ms-md-auto navbar-nav justify-content-end">
             <li class="nav-item d-flex align-items-center">
               <a href="/account/profile" class="nav-link text-white font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>

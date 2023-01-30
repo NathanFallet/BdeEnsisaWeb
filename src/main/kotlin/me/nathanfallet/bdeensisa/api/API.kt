@@ -10,7 +10,7 @@ fun Route.api() {
     route("/api") {
         apiAuth()
         authenticate("api-jwt") {
-            
+            apiUsers()
         }
     }
 }

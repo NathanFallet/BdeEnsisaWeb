@@ -19,7 +19,8 @@ data class User(
 
     constructor(
         row: ResultRow,
-        cotisant: Cotisant? = null
+        cotisant: Cotisant? = null,
+        permissions: List<String>? = null
     ) : this(
         row[Users.id],
         row.getOrNull(Users.email),
@@ -28,7 +29,8 @@ data class User(
         row.getOrNull(Users.lastName),
         row.getOrNull(Users.option),
         row.getOrNull(Users.year),
-        cotisant
+        cotisant,
+        permissions
     )
 
     suspend fun hasPermission(permission: String): Boolean {

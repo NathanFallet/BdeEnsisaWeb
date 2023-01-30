@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.*
 data class Cotisant(
     val userId: String,
     val expiration: LocalDate,
-    val updatedAt: Instant,
+    val updatedAt: Instant?,
     val user: User? = null
 ) {
 
@@ -19,7 +19,7 @@ data class Cotisant(
     ): this(
         row[Cotisants.userId],
         row[Cotisants.expiration].toLocalDate(),
-        row[Cotisants.updatedAt].toInstant(),
+        row.getOrNull(Cotisants.updatedAt)?.toInstant(),
         user
     )
 

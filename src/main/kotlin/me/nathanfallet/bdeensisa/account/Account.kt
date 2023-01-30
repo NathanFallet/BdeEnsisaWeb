@@ -7,8 +7,8 @@ import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.PipelineContext
-import me.nathanfallet.bdeensisa.models.User
-import me.nathanfallet.bdeensisa.models.Users
+import kotlinx.datetime.*
+import me.nathanfallet.bdeensisa.models.*
 import me.nathanfallet.bdeensisa.database.Database
 import org.jetbrains.exposed.sql.*
 
@@ -27,7 +27,29 @@ fun Route.account() {
 suspend fun PipelineContext<Unit, ApplicationCall>.getUser(): User? {
     return call.sessions.get<AccountSession>()?.let { session ->
         Database.dbQuery {
-            Users.select { Users.id eq session.userId }.map { User(it) }.singleOrNull()
+            Users
+                .join(
+                    Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
+                    additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
+                )
+                .slice(
+                    Users.id,
+                    Users.email,
+                    Users.firstName,
+                    Users.lastName,
+                    Users.option,
+                    Users.year,
+                    Cotisants.userId,
+                    Cotisants.expiration
+                )
+                .select { Users.id eq session.userId }.map {
+                    val permissions = Permissions.select {
+                        Permissions.userId eq session.userId
+                    }.map {
+                        it[Permissions.permission]
+                    }
+                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
+                }.singleOrNull()
         }
     }
 }

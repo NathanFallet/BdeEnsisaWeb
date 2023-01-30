@@ -11,6 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.PipelineContext
 import java.util.Date
+import kotlinx.datetime.*
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
 import org.jetbrains.exposed.sql.*
@@ -80,7 +81,29 @@ fun Route.apiAuth() {
 suspend fun PipelineContext<Unit, ApplicationCall>.getUser(): User? {
     return call.principal<JWTPrincipal>()?.payload?.getSubject()?.let { userId ->
         Database.dbQuery {
-            Users.select { Users.id eq userId }.map { User(it) }.singleOrNull()
+            Users
+                .join(
+                    Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
+                    additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
+                )
+                .slice(
+                    Users.id,
+                    Users.email,
+                    Users.firstName,
+                    Users.lastName,
+                    Users.option,
+                    Users.year,
+                    Cotisants.userId,
+                    Cotisants.expiration
+                )
+                .select { Users.id eq userId }.map {
+                    val permissions = Permissions.select {
+                        Permissions.userId eq userId
+                    }.map {
+                        it[Permissions.permission]
+                    }
+                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
+                }.singleOrNull()
         }
     }
 }

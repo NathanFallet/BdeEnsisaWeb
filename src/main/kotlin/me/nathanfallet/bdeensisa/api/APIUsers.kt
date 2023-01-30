@@ -178,9 +178,6 @@ fun Route.apiUsers() {
                                     User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
                                 }.singleOrNull()
                             }?.let { call.respond(it) } ?: run {
-                                call.response.status(HttpStatusCode.Unauthorized)
-                                call.respond(mapOf("error" to "Invalid user"))
-                            } ?: run {
                                 call.response.status(HttpStatusCode.NotFound)
                                 call.respond(mapOf("error" to "User not found"))
                             }

@@ -15,7 +15,7 @@
                   <h6 class="mb-0">A venir</h6>
                 </div>
                 <div class="card-body border-radius-lg p-3 pt-0">
-                    <#list calendar as event>
+                    <#list events as event>
                     <div class="d-flex mt-4">
                         <div class="numbers">
                             <h6 class="mb-1 text-dark text-sm">${event.title}</h6>

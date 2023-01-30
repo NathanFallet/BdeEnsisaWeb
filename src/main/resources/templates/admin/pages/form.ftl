@@ -37,7 +37,9 @@
             <div id="editor">
                 <#if page??>${page.content}</#if>
             </div>
-            <textarea name="content" class="d-none" id="hidden-content"></textarea>
+            <textarea name="content" class="d-none" id="hidden-content">
+                <#if page??>${page.content}</#if>
+            </textarea>
             
             <div class="d-flex justify-content-end mt-4">
                 <a class="btn btn-light m-0" href="/admin/pages">Annuler</a>

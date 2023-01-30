@@ -64,11 +64,13 @@ fun Route.accountRegister() {
             ))
             return@post
         }
+        val expiration = Clock.System.now().plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
         val code = Database.dbQuery {
             val code = RegistrationRequests.generateCode()
             RegistrationRequests.insert {
                 it[RegistrationRequests.email] = email
                 it[RegistrationRequests.code] = code
+                it[RegistrationRequests.expiration] = expiration.toString()
             }
             code
         }
@@ -76,7 +78,7 @@ fun Route.accountRegister() {
             email,
             "Inscription sur le site du BDE de l'ENSISA",
             "<p>Bienvenue &agrave; bord !<br/>" +
-            "Finalisez votre inscription en cliquant sur le lien suivant :</p>" +
+            "Finalisez votre inscription en cliquant sur le lien suivant, valide pendant 24h :</p>" +
             "<p><a href='https://bde.ensisa.info/account/register/$code'>https://bde.ensisa.info/account/register/$code</a></p>" +
             "<p>- L'&eacute;quipe du BDE de l'ENSISA</p>"
         )

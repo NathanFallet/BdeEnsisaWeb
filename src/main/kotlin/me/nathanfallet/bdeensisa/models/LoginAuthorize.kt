@@ -5,29 +5,27 @@ import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
 
 @Serializable
-data class RegistrationRequest(
-    val email: String,
+data class LoginAuthorize(
     val code: String,
+    val user: String,
     val expiration: Instant
 ) {
 
-    constructor(
-        row: ResultRow
-    ) : this(
-        row[RegistrationRequests.email],
-        row[RegistrationRequests.code],
-        row[RegistrationRequests.expiration].toInstant()
+    constructor(row: ResultRow): this(
+        row[LoginAuthorizes.code],
+        row[LoginAuthorizes.user],
+        row[LoginAuthorizes.expiration].toInstant()
     )
 
 }
 
-object RegistrationRequests : Table() {
+object LoginAuthorizes: Table() {
 
-    val email = varchar("email", 255)
     val code = varchar("code", 32)
+    val user = varchar("user", 32)
     val expiration = varchar("expiration", 255)
 
-    override val primaryKey = PrimaryKey(email)
+    override val primaryKey = PrimaryKey(code)
 
     fun generateCode(): String {
         val charPool: List<Char> = ('a'..'z') + ('0'..'9')

@@ -14,7 +14,7 @@ import io.ktor.util.*
 
 fun Application.configureSecurity() {
     authentication {
-        jwt("api-v1-jwt") {
+        jwt("api-jwt") {
             val secret =
                     this@configureSecurity.environment.config.property("jwt.secret").getString()
             val issuer =

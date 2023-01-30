@@ -87,4 +87,13 @@ object Users : Table() {
 
 }
 
-@Serializable data class UserToken(val token: String, val user: User)
+@Serializable
+data class UserAuthorize(
+    val code: String
+)
+
+@Serializable
+data class UserToken(
+    val token: String,
+    val user: User
+)

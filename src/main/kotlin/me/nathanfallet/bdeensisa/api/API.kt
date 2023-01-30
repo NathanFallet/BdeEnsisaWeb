@@ -8,6 +8,9 @@ import io.ktor.server.request.*
 
 fun Route.api() {
     route("/api") {
-
+        apiAuth()
+        authenticate("api-jwt") {
+            
+        }
     }
 }

@@ -26,14 +26,7 @@ fun Route.account() {
 suspend fun PipelineContext<Unit, ApplicationCall>.getUser(): User? {
     return call.sessions.get<AccountSession>()?.let { session ->
         Database.dbQuery {
-            Users.customJoin().select { Users.id eq session.userId }.map {
-                val permissions = Permissions.select {
-                    Permissions.userId eq session.userId
-                }.map {
-                    it[Permissions.permission]
-                }
-                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
-            }.singleOrNull()
+            Users.customJoin().select { Users.id eq session.userId }.mapUser(true).singleOrNull()
         }
     }
 }

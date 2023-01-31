@@ -19,14 +19,7 @@ fun Route.adminUsers() {
             getUser()?.let { user ->
                 if (user.hasPermission("admin.users.view")) {
                     val users = Database.dbQuery {
-                        Users
-                            .join(
-                                Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
-                                additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
-                            )
-                            .selectAll().map {
-                                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                            }
+                        Users.customJoin().selectAll().mapUser(false)
                     }
                     call.respond(FreeMarkerContent("admin/users/list.ftl", mapOf(
                         "title" to "Utilisateurs",
@@ -46,14 +39,7 @@ fun Route.adminUsers() {
                 if (user.hasPermission("admin.users.view")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Users
-                                .join(
-                                    Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
-                                    additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
-                                )
-                                .select { Users.id eq id }.map {
-                                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                                }.singleOrNull()
+                            Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                         }?.let { selectedUser ->
                             call.respond(FreeMarkerContent("admin/users/form.ftl", mapOf(
                                 "title" to "Utilisateur",
@@ -81,14 +67,7 @@ fun Route.adminUsers() {
                 if (user.hasPermission("admin.users.edit")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Users
-                                .join(
-                                    Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
-                                    additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
-                                )
-                                .select { Users.id eq id }.map {
-                                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                                }.singleOrNull()
+                            Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                         }?.let { selectedUser ->
                             val params = call.receiveParameters()
                             val firstName = params["first_name"]

@@ -69,9 +69,7 @@ fun Route.apiUsers() {
                     val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
                     val offset = call.request.queryParameters["offset"]?.toLongOrNull() ?: 0L
                     Database.dbQuery {
-                        Users.customJoin().selectAll().limit(limit, offset).map {
-                            User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                        }
+                        Users.customJoin().selectAll().limit(limit, offset).mapUser(false)
                     }.let { call.respond(it) }
                 } else {
                     call.response.status(HttpStatusCode.Forbidden)
@@ -87,9 +85,7 @@ fun Route.apiUsers() {
                 if (user.hasPermission("admin.users.view")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Users.customJoin().select { Users.id eq id }.map {
-                                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                            }.singleOrNull()
+                            Users.customJoin().select { Users.id eq id }.mapUser(true).singleOrNull()
                         }?.let { call.respond(it) } ?: run {
                             call.response.status(HttpStatusCode.NotFound)
                             call.respond(mapOf("error" to "User not found"))
@@ -112,9 +108,7 @@ fun Route.apiUsers() {
                 if (user.hasPermission("admin.users.edit")) {
                     call.parameters["id"]?.let { id ->
                         Database.dbQuery {
-                            Users.customJoin().select { Users.id eq id }.map {
-                                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                            }.singleOrNull()
+                            Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                         }?.let { selectedUser ->
                             val upload = try {
                                 call.receive<UserUpload>()
@@ -174,9 +168,7 @@ fun Route.apiUsers() {
                                 }
                             }
                             Database.dbQuery {
-                                Users.customJoin().select { Users.id eq id }.map {
-                                    User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) })
-                                }.singleOrNull()
+                                Users.customJoin().select { Users.id eq id }.mapUser(true).singleOrNull()
                             }?.let { call.respond(it) } ?: run {
                                 call.response.status(HttpStatusCode.NotFound)
                                 call.respond(mapOf("error" to "User not found"))

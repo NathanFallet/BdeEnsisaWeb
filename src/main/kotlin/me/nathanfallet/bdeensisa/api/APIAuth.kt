@@ -35,9 +35,12 @@ fun Route.apiAuth() {
 
             // Check code and client
             Database.dbQuery {
-                LoginAuthorizes.join(Users, JoinType.INNER, LoginAuthorizes.user, Users.id)
+                LoginAuthorizes
                     .select { LoginAuthorizes.code eq code.code }
-                    .map { User(it) }
+                    .map {
+                        val userId = it[LoginAuthorizes.user]
+                        Users.customJoin().select { Users.id eq userId }.mapUser(true).singleOrNull()
+                    }
                     .singleOrNull()
             }?.let {
                 // Delete code
@@ -81,14 +84,7 @@ fun Route.apiAuth() {
 suspend fun PipelineContext<Unit, ApplicationCall>.getUser(): User? {
     return call.principal<JWTPrincipal>()?.payload?.getSubject()?.let { userId ->
         Database.dbQuery {
-            Users.customJoin().select { Users.id eq userId }.map {
-                val permissions = Permissions.select {
-                    Permissions.userId eq userId
-                }.map {
-                    it[Permissions.permission]
-                }
-                User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
-            }.singleOrNull()
+            Users.customJoin().select { Users.id eq userId }.mapUser(true).singleOrNull()
         }
     }
 }

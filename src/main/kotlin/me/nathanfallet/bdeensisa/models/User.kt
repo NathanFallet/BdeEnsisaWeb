@@ -107,6 +107,18 @@ object Users : Table() {
 
 }
 
+fun Query.mapUser(loadPermissions: Boolean): List<User> {
+    return map {
+        val id = it[Users.id]
+        val permissions = if (loadPermissions) Permissions.select {
+            Permissions.userId eq id
+        }.map {
+            it[Permissions.permission]
+        } else null
+        User(it, it.getOrNull(Cotisants.userId)?.run { Cotisant(it) }, permissions)
+    }
+}
+
 @Serializable
 data class UserAuthorize(
     val code: String

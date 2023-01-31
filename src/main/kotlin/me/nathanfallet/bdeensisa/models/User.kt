@@ -52,8 +52,8 @@ data class User(
     }
 
     val description: String
-        get() = {
-            val optionStr = when(option) {
+        get() {
+            val optionStr = when (option) {
                 "ir" -> "Informatique et Réseaux"
                 "ase" -> "Automatique et Systèmes embarqués"
                 "meca" -> "Mécanique"
@@ -61,8 +61,8 @@ data class User(
                 "gi" -> "Génie Industriel"
                 else -> "Inconnu"
             }
-            year + " - " + optionStr
-        }()
+            return "$year - $optionStr"
+        }
 
 }
 

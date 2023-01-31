@@ -30,7 +30,7 @@ data class Event(
     )
 
     val formatted: String
-        get() = {
+        get() {
             if (end != start) {
                 val startStr = DateTimeFormatter.ofPattern("'Du' dd/MM/yyyy 'à' HH:mm").format(
                     start?.toLocalDateTime(
@@ -42,15 +42,15 @@ data class Event(
                         TimeZone.currentSystemDefault()
                     )?.toJavaLocalDateTime()
                 )
-                "$startStr $endStr"
+                return "$startStr $endStr"
             } else {
-                DateTimeFormatter.ofPattern("'Le' dd/MM/yyyy 'à' HH:mm").format(
+                return DateTimeFormatter.ofPattern("'Le' dd/MM/yyyy 'à' HH:mm").format(
                     start?.toLocalDateTime(
                         TimeZone.currentSystemDefault()
                     )?.toJavaLocalDateTime()
                 )
             }
-        }()
+        }
 
 }
 

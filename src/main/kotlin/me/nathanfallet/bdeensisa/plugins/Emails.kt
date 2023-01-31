@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import kotlinx.coroutines.*
 import org.apache.commons.mail.HtmlEmail;
 
-object EmailsPlugin {
+object Emails {
 
     lateinit var host: String
     lateinit var username: String
@@ -27,7 +27,7 @@ object EmailsPlugin {
 }
 
 fun Application.configureEmails() {
-    EmailsPlugin.host = environment.config.property("email.host").getString()
-    EmailsPlugin.username = environment.config.property("email.username").getString()
-    EmailsPlugin.password = environment.config.property("email.password").getString()
+    Emails.host = environment.config.property("email.host").getString()
+    Emails.username = environment.config.property("email.username").getString()
+    Emails.password = environment.config.property("email.password").getString()
 }

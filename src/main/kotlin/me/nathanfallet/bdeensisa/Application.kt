@@ -16,4 +16,5 @@ fun Application.module() {
     configureSessions()
     configureRouting()
     configureEmails()
+    configureExpiration()
 }

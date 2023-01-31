@@ -11,7 +11,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.datetime.*
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
-import me.nathanfallet.bdeensisa.plugins.EmailsPlugin
+import me.nathanfallet.bdeensisa.plugins.Emails
 import org.jetbrains.exposed.sql.*
 
 fun Route.accountRegister() {
@@ -74,7 +74,7 @@ fun Route.accountRegister() {
             }
             code
         }
-        EmailsPlugin.sendEmail(
+        Emails.sendEmail(
             email,
             "Inscription sur le site du BDE de l'ENSISA",
             "<p>Bienvenue &agrave; bord !<br/>" +

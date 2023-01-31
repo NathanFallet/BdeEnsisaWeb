@@ -93,16 +93,14 @@ fun Route.adminUsers() {
                             val params = call.receiveParameters()
                             val firstName = params["first_name"]
                             val lastName = params["last_name"]
-                            val email = params["email"]
                             val year = params["year"]
                             val option = params["option"]
                             val expiration = params["expiration"]?.toLocalDate()
-                            if (firstName != null && lastName != null && email != null && year != null && option != null) {
+                            if (firstName != null && lastName != null && year != null && option != null) {
                                 Database.dbQuery {
                                     Users.update({ Users.id eq selectedUser.id }) {
                                         it[Users.firstName] = firstName
                                         it[Users.lastName] = lastName
-                                        it[Users.email] = email
                                         it[Users.year] = year
                                         it[Users.option] = option
                                     }

@@ -31,6 +31,10 @@
   <link href="/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="/css/argon-dashboard.css?v=2.0.5" rel="stylesheet" />
+
+  <#if redirectUrl??>
+  <meta http-equiv="refresh" content="0;url=${redirectUrl}">
+  </#if>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">

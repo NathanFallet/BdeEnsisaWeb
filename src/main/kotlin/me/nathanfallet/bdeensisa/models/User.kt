@@ -2,6 +2,7 @@ package me.nathanfallet.bdeensisa.models
 
 import kotlinx.serialization.Serializable
 import me.nathanfallet.bdeensisa.database.Database
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
 
 @Serializable
@@ -19,7 +20,8 @@ data class User(
 
     constructor(
         row: ResultRow,
-        cotisant: Cotisant? = null
+        cotisant: Cotisant? = null,
+        permissions: List<String>? = null
     ) : this(
         row[Users.id],
         row.getOrNull(Users.email),
@@ -28,7 +30,8 @@ data class User(
         row.getOrNull(Users.lastName),
         row.getOrNull(Users.option),
         row.getOrNull(Users.year),
-        cotisant
+        cotisant,
+        permissions
     )
 
     suspend fun hasPermission(permission: String): Boolean {
@@ -85,6 +88,41 @@ object Users : Table() {
         }
     }
 
+    fun customJoin(): FieldSet {
+        return join(
+            Cotisants, JoinType.LEFT, Users.id, Cotisants.userId,
+            additionalConstraint = { Cotisants.expiration greater Clock.System.now().toString() }
+        )
+        .slice(
+            Users.id,
+            Users.email,
+            Users.firstName,
+            Users.lastName,
+            Users.option,
+            Users.year,
+            Cotisants.userId,
+            Cotisants.expiration
+        )
+    }
+
 }
 
-@Serializable data class UserToken(val token: String, val user: User)
+@Serializable
+data class UserAuthorize(
+    val code: String
+)
+
+@Serializable
+data class UserToken(
+    val token: String,
+    val user: User
+)
+
+@Serializable
+data class UserUpload(
+    val firstName: String?,
+    val lastName: String?,
+    val year: String?,
+    val option: String?,
+    val expiration: String?
+)

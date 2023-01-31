@@ -21,7 +21,7 @@
                     </div>
 
                     <label for="email" class="form-label mt-4">Email</label>
-                    <input type="text" class="form-control" name="email" id="email" value="${user.email}">
+                    <input type="text" class="form-control" name="email" id="email" value="${user.email}" disabled>
 
                     <div class="row">
                         <div class="col-4">

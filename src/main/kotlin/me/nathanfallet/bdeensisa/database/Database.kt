@@ -23,6 +23,7 @@ object Database {
             SchemaUtils.create(MenuItems)
             SchemaUtils.create(Users)
             SchemaUtils.create(RegistrationRequests)
+            SchemaUtils.create(LoginAuthorizes)
             SchemaUtils.create(Cotisants)
             SchemaUtils.create(Permissions)
             SchemaUtils.create(Pages)

@@ -35,9 +35,9 @@ object Markdown {
         to "<a href=\"$2\">$1</a>",
 
         // Lists
-        Regex("""^(\+)([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$3</li></ul>",
-        Regex("""^(\*)([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$3</li></ul>",
-        Regex("""^(\-)([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$3</li></ul>",
+        Regex("""^\+([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$1</li></ul>",
+        Regex("""^\*([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$1</li></ul>",
+        Regex("""^\-([^\n]+)""", RegexOption.MULTILINE) to "<ul><li>$1</li></ul>",
 
         // Containers
         Regex("""\{\s*\{\s*([^\}]+)\s*\}\s*\{\s*([^\}]+)\s*\}\s*\}""")

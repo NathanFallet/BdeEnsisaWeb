@@ -52,7 +52,6 @@ data class Event(
                 )
             }
         }
-    
 
     val markdown: String
         get() = content?.let { Markdown.render(it) } ?: ""

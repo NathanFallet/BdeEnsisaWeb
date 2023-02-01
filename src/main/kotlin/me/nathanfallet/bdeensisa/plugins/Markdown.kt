@@ -23,8 +23,6 @@ object Markdown {
         // Bold, italic
         Regex("""\*\*\s?([^\n]+)\*\*""") to "<strong>$1</strong>",
         Regex("""\*\s?([^\n]+)\*""") to "<em>$1</em>",
-        Regex("""__\s?([^\n]+)__""") to "<strong>$1</strong>",
-        Regex("""_\s?([^\n]+)_""") to "<em>$1</em>",
 
         // Images
         Regex("""!\[([^\]]+)\]\(([^)]+)\)""")

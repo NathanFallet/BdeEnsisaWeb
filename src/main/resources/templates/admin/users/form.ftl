@@ -83,7 +83,7 @@
         </div>
     </div>
 </div>
-<script src="/js/plugins/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     if (document.querySelector('.datetimepicker')) {
       flatpickr('.datetimepicker', {

@@ -48,9 +48,7 @@
       </div>
     </div>
   </div>
-  <script src="/js/plugins/dragula/dragula.min.js"></script>
-  <script src="/js/plugins/jkanban/jkanban.js"></script>
-  <script src="/js/plugins/datatables.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@3.0.2/dist/umd/simple-datatables.js"></script>
   <script>
     const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
       searchable: true,

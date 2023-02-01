@@ -18,19 +18,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/img/logo_round.png">
   <link rel="icon" type="image/png" href="/img/logo_round.png">
   <title>${title} - BDE de l'ENSISA</title>
-  <!--     Fonts and icons     -->
+
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-  <!-- Nucleo Icons -->
-  <link href="/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link href="/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- CSS Files -->
-  <link id="pagestyle" href="/css/argon-dashboard.css?v=2.0.5" rel="stylesheet" />
+  <link id="pagestyle" href="/css/argon-dashboard.min.css" rel="stylesheet" />
 
   <#if redirectUrl??>
   <meta http-equiv="refresh" content="0;url=${redirectUrl}">
@@ -40,24 +35,9 @@
 <body class="g-sidenav-show bg-gray-100">
   <#nested>
 
-  <!--   Core JS Files   -->
-  <script src="/js/core/popper.min.js"></script>
-  <script src="/js/core/bootstrap.min.js"></script>
-  <script src="/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="/js/plugins/smooth-scrollbar.min.js"></script>
-  <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="/js/argon-dashboard.min.js?v=2.0.5"></script>
+  <script src="/js/argon-dashboard.min.js"></script>
 </body>
 
 </html>
@@ -70,7 +50,7 @@
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="/">
-        <img src="/img/logo_round.png" class="navbar-brand-img h-100" alt="main_logo">
+        <img src="/img/logo_round.png" class="navbar-brand-img h-100" alt="Logo du BDE">
         <span class="ms-1 font-weight-bold">BDE de l'ENSISA</span>
       </a>
     </div>

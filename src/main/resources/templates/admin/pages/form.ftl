@@ -30,16 +30,12 @@
                 </div>
             </div>
 
-            <label class="mt-4">Contenu de la page</label>
+            <label for="content" class="mt-4">Contenu de la page</label>
             <p class="form-text text-muted text-xs ms-1">
-                Ce qui sera affichée sur la page
+                Ce qui sera affichée sur la page.
+                Le formatage Markdown est supporté.
             </p>
-            <div id="editor">
-                <#if page??>${page.content}</#if>
-            </div>
-            <textarea name="content" class="d-none" id="hidden-content">
-                <#if page??>${page.content}</#if>
-            </textarea>
+            <textarea name="content" id="content" class="form-control" rows="7"><#if page??>${page.content}</#if></textarea>
             
             <div class="d-flex justify-content-end mt-4">
                 <a class="btn btn-light m-0" href="/admin/pages">Annuler</a>
@@ -51,13 +47,4 @@
         </form>
     </div>
 </div>
-<script src="/js/plugins/quill.min.js"></script>
-<script>
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-    quill.on('text-change', function(delta, oldDelta, source) {
-        document.getElementById('hidden-content').innerHTML = quill.container.firstChild.innerHTML;
-    });
-</script>
 </@template.page>

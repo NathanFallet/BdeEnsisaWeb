@@ -2,6 +2,7 @@ package me.nathanfallet.bdeensisa.models
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
+import me.nathanfallet.bdeensisa.plugins.Markdown
 
 @Serializable
 data class Page(
@@ -21,6 +22,9 @@ data class Page(
         row.getOrNull(Pages.content),
         row.getOrNull(Pages.home)
     )
+
+    val markdown: String
+        get() = content?.let { Markdown.render(it) } ?: ""
 
 }
 

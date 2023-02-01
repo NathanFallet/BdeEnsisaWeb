@@ -108,7 +108,7 @@
           </div>
         </div>
       </div>
-      <a href="mailto:bde@ensisa.info" class="btn btn-dark btn-sm w-100 mb-3">bde@ensisa.info</a>
+      <a href="mailto:bde@bdensisa.org" class="btn btn-dark btn-sm w-100 mb-3">bde@bdensisa.org</a>
       <a href="https://www.instagram.com/bdensisa" class="btn btn-instagram btn-sm w-100 mb-3">Instagram</a>
       <a href="https://www.facebook.com/bdeensisa/" class="btn btn-facebook btn-sm w-100 mb-3">Facebook</a>
     </div>
@@ -121,7 +121,7 @@
           </div>
         </div>
       </div>
-      <a href="mailto:dev@ensisa.info" class="btn btn-dark btn-sm w-100 mb-3">dev@ensisa.info</a>
+      <a href="mailto:dev@bdensisa.org" class="btn btn-dark btn-sm w-100 mb-3">dev@bdensisa.org</a>
       <a href="https://github.com/NathanFallet/BdeEnsisaWeb" class="btn btn-github btn-sm w-100 mb-3">GitHub</a>
     </div>
   </aside>

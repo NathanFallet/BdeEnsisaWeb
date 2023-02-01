@@ -79,7 +79,7 @@ fun Route.accountRegister() {
             "Inscription sur le site du BDE de l'ENSISA",
             "<p>Bienvenue &agrave; bord !<br/>" +
             "Finalisez votre inscription en cliquant sur le lien suivant, valide pendant 24h :</p>" +
-            "<p><a href='https://bde.ensisa.info/account/register/$code'>https://bde.ensisa.info/account/register/$code</a></p>" +
+            "<p><a href='https://bdensisa.org/account/register/$code'>https://bdensisa.org/account/register/$code</a></p>" +
             "<p>- L'&eacute;quipe du BDE de l'ENSISA</p>"
         )
         call.respond(FreeMarkerContent(

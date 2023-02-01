@@ -104,6 +104,19 @@
       <a href="mailto:dev@bdensisa.org" class="btn btn-dark btn-sm w-100 mb-3">dev@bdensisa.org</a>
       <a href="https://github.com/NathanFallet/BdeEnsisaWeb" class="btn btn-github btn-sm w-100 mb-3">GitHub</a>
     </div>
+    <hr class="horizontal dark">
+    <div class="sidenav-footer mx-3 my-3 text-center">
+      <p class="small px-3 pt-3">
+        &copy; 2023 BDE de l'ENSISA
+      </p>
+      <p class="small px-3">
+        Développé avec <i class="fa fa-heart text-danger"></i> en <a href="https://kotlinlang.org" class="text-dark font-weight-bold">Kotlin</a>
+        par <a href="https://nathanfallet.me" class="text-dark font-weight-bold">Nathan Fallet</a>
+      </p>
+      <p class="small px-3">
+        Hébergé par le <a href="https://www.groupe-minaste.org" class="text-dark font-weight-bold">Groupe MINASTE</a>
+      </p>
+    </div>
   </aside>
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->

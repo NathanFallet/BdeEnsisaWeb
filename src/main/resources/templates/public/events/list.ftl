@@ -28,15 +28,19 @@
         </div>
     </div>
 </div>
-<script src="/js/plugins/fullcalendar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.1/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.1/locales/fr.global.min.js"></script>
 <script>
     var calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+      locale: 'fr',
       contentHeight: 'auto',
       headerToolbar: {
-        start: 'today prev,next',
+        start: 'prev,next today',
         center: 'title',
-        end: 'dayGridMonth,dayGridWeek,timeGridDay'
+        end: 'dayGridMonth,timeGridWeek'
       },
+      buttonIcons: false,
+      dayMaxEvents: true,
       selectable: true,
       events: [
         <#list calendar as event>

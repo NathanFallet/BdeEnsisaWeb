@@ -40,7 +40,7 @@
         </form>
     </div>
 </div>
-<script src="/js/plugins/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     if (document.querySelector('.datetimepicker')) {
       flatpickr('.datetimepicker', {
@@ -48,7 +48,7 @@
         enableTime: true,
         dateFormat: "Z",
         altInput: true,
-        altFormat: "d/m/Y à H:i",
+        altFormat: "d/m/Y à H:i"
       }); // flatpickr
     }
 </script>

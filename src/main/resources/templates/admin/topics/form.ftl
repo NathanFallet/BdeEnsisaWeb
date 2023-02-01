@@ -26,7 +26,8 @@
 
             <label for="content" class="mt-4">Contenu de l'affaire</label>
             <p class="form-text text-muted text-xs ms-1">
-                Ce qui sera affichée sur la page de l'affaire
+                Ce qui sera affichée sur la page de l'affaire.
+                Le formatage Markdown est supporté.
             </p>
             <textarea name="content" id="content" class="form-control"><#if topic??>${topic.content}</#if></textarea>
             

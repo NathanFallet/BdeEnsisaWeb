@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
+import me.nathanfallet.bdeensisa.plugins.Markdown
 
 @Serializable
 data class Topic(
@@ -35,6 +36,9 @@ data class Topic(
                 TimeZone.currentSystemDefault()
             )?.toJavaLocalDateTime()
         )
+
+    val markdown: String
+        get() = content?.let { Markdown.render(it) } ?: ""
 
 }
 

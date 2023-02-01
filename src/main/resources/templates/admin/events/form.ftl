@@ -12,7 +12,8 @@
 
             <label for="content" class="mt-4">Contenu de l'évènement</label>
             <p class="form-text text-muted text-xs ms-1">
-                Ce qui sera affichée sur la page de l'évènement
+                Ce qui sera affichée sur la page de l'évènement.
+                Le formatage Markdown est supporté.
             </p>
             <textarea name="content" id="content" class="form-control"><#if event??>${event.content}</#if></textarea>
 

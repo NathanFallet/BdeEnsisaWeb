@@ -103,7 +103,7 @@
       <div class="card card-plain shadow-none" id="sidenavCard">
         <div class="card-body text-center p-3 w-100">
           <div class="docs-info">
-            <h6>Besoin d'aide ?</h6>
+            <p class="h6">Besoin d'aide ?</p>
             <p class="text-xs font-weight-bold">Contactez le BDE :</p>
           </div>
         </div>
@@ -117,7 +117,7 @@
       <div class="card card-plain shadow-none" id="sidenavCard">
         <div class="card-body text-center p-3 w-100">
           <div class="docs-info">
-            <h6>Un problème avec le site ou l'app ?</h6>
+            <p class="h6">Un problème avec le site ou l'app ?</p>
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@
                 <h6 class="mb-0 px-3 pt-3">${topic.title}</h6>
                 <p class="mb-0 px-3">Ajoutée ${topic.formatted}</p>
                 <hr class="horizontal dark">
-                <p class="mb-0 px-3 pb-3">${topic.content}</p>
+                <div class="mb-0 px-3">${topic.markdown}</div>
             </div>
           </div>
         </div>

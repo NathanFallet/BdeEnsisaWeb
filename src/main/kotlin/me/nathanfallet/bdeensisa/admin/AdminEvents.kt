@@ -58,7 +58,6 @@ fun Route.adminEvents() {
                 "menu" to MenuItems.fetchAdmin(user),
                 "topics" to topics
             )))
-
         }
         post ("/new") {
             val user = getUser()

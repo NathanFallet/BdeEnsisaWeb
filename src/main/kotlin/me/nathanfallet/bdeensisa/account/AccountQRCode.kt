@@ -23,7 +23,7 @@ fun Route.accountQRCode() {
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             return@get
         }
-        
+
         val bytes = QRCode(users.replace("%s", user.id.toString())).render().getBytes("PNG")
         call.response.header("Content-Type", "image/png")
         call.respond(bytes)

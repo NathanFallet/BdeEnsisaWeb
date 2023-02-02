@@ -111,7 +111,7 @@ fun Route.accountRegister() {
                 "redirect" to call.request.queryParameters["redirect"]
             )
         ))
-        
+
     }
     post("/register/{code}") {
         val request = call.parameters["code"]?.let { code ->

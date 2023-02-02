@@ -37,7 +37,7 @@ fun Route.accountLogin() {
             ))
             return@post
         }
-        
+
         val user = Database.dbQuery {
             Users.select { Users.email eq email }.map { User(it) }.singleOrNull()
         }?.takeIf { BCrypt.verifyer().verify(password.toCharArray(), it.password).verified }

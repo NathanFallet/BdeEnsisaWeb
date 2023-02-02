@@ -13,42 +13,41 @@ import org.jetbrains.exposed.sql.*
 
 fun Route.publicPages() {
     get {
-        Database.dbQuery {
+        val page = Database.dbQuery {
             Pages.select { Pages.home eq true }.map { Page(it) }.singleOrNull()
-        }?.let { page ->
-            call.respond(FreeMarkerContent(
-                "public/pages/view.ftl",
-                mapOf(
-                    "title" to page.title,
-                    "markdown" to page.markdown,
-                    "menu" to MenuItems.fetch()
-                )
-            ))
-        } ?: run {
+        }
+        if (page == null) {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Aucune page d'accueil trouvée")))
+            return@get
         }
+        call.respond(FreeMarkerContent(
+            "public/pages/view.ftl",
+            mapOf(
+                "title" to page.title,
+                "markdown" to page.markdown,
+                "menu" to MenuItems.fetch()
+            )
+        ))
     }
     get("/pages/{url}") {
-        call.parameters["url"]?.let { url ->
+        val page = call.parameters["url"]?.let { url ->
             Database.dbQuery {
                 Pages.select { Pages.url eq url }.map { Page(it) }.singleOrNull()
-            }?.let { page ->
-                call.respond(FreeMarkerContent(
-                    "public/pages/view.ftl",
-                    mapOf(
-                        "title" to page.title,
-                        "markdown" to page.markdown,
-                        "menu" to MenuItems.fetch()
-                    )
-                ))
-            } ?: run {
-                call.response.status(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             }
-        } ?: run {
+        }
+        if (page == null) {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+            return@get
         }
+        call.respond(FreeMarkerContent(
+            "public/pages/view.ftl",
+            mapOf(
+                "title" to page.title,
+                "markdown" to page.markdown,
+                "menu" to MenuItems.fetch()
+            )
+        ))
     }
 }

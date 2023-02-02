@@ -20,51 +20,53 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminUploads() {
     route("/uploads") {
         get {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.uploads.view")) {
-                    val uploadsFolder = Paths.get("uploads")
-                    if (!Files.exists(uploadsFolder)) {
-                        Files.createDirectory(uploadsFolder)
-                    }
-                    val uploads = Files.walk(uploadsFolder)
-                        .filter { Files.isRegularFile(it) }
-                        .map { it.toFile() }.toList()
-                    call.respond(FreeMarkerContent("admin/uploads/list.ftl", mapOf(
-                        "title" to "Téléchargements",
-                        "uploads" to uploads,
-                        "menu" to MenuItems.fetchAdmin(user)
-                    )))
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/uploads")
+                return@get
             }
+            if (!user.hasPermission("admin.uploads.view")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val uploadsFolder = Paths.get("uploads")
+            if (!Files.exists(uploadsFolder)) {
+                Files.createDirectory(uploadsFolder)
+            }
+            val uploads = Files.walk(uploadsFolder)
+                .filter { Files.isRegularFile(it) }
+                .map { it.toFile() }.toList()
+            call.respond(FreeMarkerContent("admin/uploads/list.ftl", mapOf(
+                "title" to "Téléchargements",
+                "uploads" to uploads,
+                "menu" to MenuItems.fetchAdmin(user)
+            )))
         }
         post {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.uploads.new")) {
-                    val multipart = call.receiveMultipart()
-                    multipart.forEachPart { part ->
-                        if (part is PartData.FileItem) {
-                            val name = part.originalFileName!!
-                            val file = File("uploads/$name")
-
-                            part.streamProvider().use { its ->
-                                file.outputStream().buffered().use {
-                                    its.copyTo(it)
-                                }
-                            }
-                        }
-                        part.dispose()
-                    }
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/uploads")
+                return@post
+            }
+            if (!user.hasPermission("admin.uploads.new")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@post
+            }
+            val multipart = call.receiveMultipart()
+            multipart.forEachPart { part ->
+                if (part is PartData.FileItem) {
+                    val name = part.originalFileName!!
+                    val file = File("uploads/$name")
+
+                    part.streamProvider().use { its ->
+                        file.outputStream().buffered().use {
+                            its.copyTo(it)
+                        }
+                    }
+                }
+                part.dispose()
             }
         }
     }

@@ -29,52 +29,54 @@ fun Route.publicQuestions() {
             ))
         }
         get("/ask") {
-            getUser()?.let {
+            val user = getUser()
+            if (user == null) {
+                call.respondRedirect("/account/login?redirect=/questions/ask")
+                return@get
+            }
+            call.respond(FreeMarkerContent(
+                "public/questions/ask.ftl",
+                mapOf(
+                    "title" to "Poser une question",
+                    "menu" to MenuItems.fetch()
+                )
+            ))
+        }
+        post("/ask") {
+            val user = getUser()
+            if (user == null) {
+                call.respondRedirect("/account/login?redirect=/questions/ask")
+                return@post
+            }
+            val params = call.receiveParameters()
+            val content = params["content"]
+            if (content == null) {
                 call.respond(FreeMarkerContent(
                     "public/questions/ask.ftl",
                     mapOf(
                         "title" to "Poser une question",
-                        "menu" to MenuItems.fetch()
+                        "menu" to MenuItems.fetch(),
+                        "error" to true
                     )
                 ))
-            } ?: run {
-                call.respondRedirect("/account/login?redirect=/questions/ask")
+                return@post
             }
-        }
-        post("/ask") {
-            getUser()?.let { user ->
-                val params = call.receiveParameters()
-                val content = params["content"]
-                if (content != null) {
-                    Database.dbQuery {
-                        Questions.insert {
-                            it[Questions.id] = Questions.generateId()
-                            it[Questions.content] = content
-                            it[Questions.userId] = user.id
-                            it[Questions.createdAt] = Clock.System.now().toString()
-                        }
-                    }
-                    call.respond(FreeMarkerContent(
-                        "public/questions/ask.ftl",
-                        mapOf(
-                            "title" to "Poser une question",
-                            "menu" to MenuItems.fetch(),
-                            "success" to true
-                        )
-                    ))
-                } else {
-                    call.respond(FreeMarkerContent(
-                        "public/questions/ask.ftl",
-                        mapOf(
-                            "title" to "Poser une question",
-                            "menu" to MenuItems.fetch(),
-                            "error" to true
-                        )
-                    ))
+            Database.dbQuery {
+                Questions.insert {
+                    it[Questions.id] = Questions.generateId()
+                    it[Questions.content] = content
+                    it[Questions.userId] = user.id
+                    it[Questions.createdAt] = Clock.System.now().toString()
                 }
-            } ?: run {
-                call.respondRedirect("/account/login?redirect=/questions/ask")
             }
+            call.respond(FreeMarkerContent(
+                "public/questions/ask.ftl",
+                mapOf(
+                    "title" to "Poser une question",
+                    "menu" to MenuItems.fetch(),
+                    "success" to true
+                )
+            ))
         }
     }
 }

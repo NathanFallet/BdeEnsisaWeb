@@ -103,6 +103,7 @@ fun Route.adminEvents() {
             if (!user.hasPermission("admin.events.edit")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
             }
             val event = call.parameters["id"]?.let { id ->
                 Database.dbQuery {

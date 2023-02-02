@@ -16,15 +16,14 @@ fun Route.apiEvents() {
         get {
             val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
             val offset = call.request.queryParameters["offset"]?.toLongOrNull() ?: 0L
-            Database.dbQuery {
+            val events = Database.dbQuery {
                 Events
                     .select { Events.end greater Clock.System.now().toString() }
                     .orderBy(Events.start)
                     .limit(limit, offset)
-                    .map {
-                        Event(it)
-                    }
-            }.let { call.respond(it) }
+                    .map { Event(it) }
+            }
+            call.respond(events)
         }
     }
 }

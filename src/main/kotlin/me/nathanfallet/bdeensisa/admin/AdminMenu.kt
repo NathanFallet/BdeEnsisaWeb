@@ -15,173 +15,180 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminMenu() {
     route("/menu") {
         get {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.view")) {
-                    val menu = Database.dbQuery {
-                        MenuItems.selectAll().orderBy(MenuItems.position).map { MenuItem(it) }
-                    }
-                    call.respond(FreeMarkerContent("admin/menu/list.ftl", mapOf(
-                        "title" to "Menu",
-                        "menuitems" to menu,
-                        "menu" to MenuItems.fetchAdmin(user)
-                    )))
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@get
             }
+            if (!user.hasPermission("admin.menu.view")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val menu = Database.dbQuery {
+                MenuItems.selectAll().orderBy(MenuItems.position).map { MenuItem(it) }
+            }
+            call.respond(FreeMarkerContent("admin/menu/list.ftl", mapOf(
+                "title" to "Menu",
+                "menuitems" to menu,
+                "menu" to MenuItems.fetchAdmin(user)
+            )))
         }
         get ("/new") {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.new")) {
-                    val parents = Database.dbQuery {
-                        MenuItems.select {
-                            MenuItems.parent eq null
-                        }.map { MenuItem(it) }
-                    }
-                    call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
-                        "title" to "Nouvel élément de menu",
-                        "menu" to MenuItems.fetchAdmin(user),
-                        "parents" to parents
-                    )))
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@get
             }
+            if (!user.hasPermission("admin.menu.new")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val parents = Database.dbQuery {
+                MenuItems.select {
+                    MenuItems.parent eq null
+                }.map { MenuItem(it) }
+            }
+            call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
+                "title" to "Nouvel élément de menu",
+                "menu" to MenuItems.fetchAdmin(user),
+                "parents" to parents
+            )))
         }
         post ("/new") {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.new")) {
-                    val params = call.receiveParameters()
-                    val title = params["title"]
-                    val url = params["url"]
-                    val position = params["position"]
-                    val parent = params["parent"]
-                    if (title != null && url != null && position != null) {
-                        Database.dbQuery {
-                            MenuItems.insert {
-                                it[MenuItems.id] = MenuItems.generateId()
-                                it[MenuItems.title] = title
-                                it[MenuItems.url] = url
-                                it[MenuItems.position] = position.toInt()
-                                it[MenuItems.parent] = parent?.let { if (it == "") null else it }
-                            }
-                        }
-                        call.respondRedirect("/admin/menu")
-                    } else {
-                        call.response.status(HttpStatusCode.BadRequest)
-                        call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
-                    }
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@post
             }
+            if (!user.hasPermission("admin.menu.new")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@post
+            }
+            val params = call.receiveParameters()
+            val title = params["title"]
+            val url = params["url"]
+            val position = params["position"]
+            val parent = params["parent"]
+            if (title == null || url == null || position == null) {
+                call.response.status(HttpStatusCode.BadRequest)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
+                return@post
+            }
+            Database.dbQuery {
+                MenuItems.insert {
+                    it[MenuItems.id] = MenuItems.generateId()
+                    it[MenuItems.title] = title
+                    it[MenuItems.url] = url
+                    it[MenuItems.position] = position.toInt()
+                    it[MenuItems.parent] = parent?.let { if (it == "") null else it }
+                }
+            }
+            call.respondRedirect("/admin/menu")
         }
         get ("/{id}") {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.edit")) {
-                    call.parameters["id"]?.let { id ->
-                        Database.dbQuery {
-                            MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
-                        }?.let { item ->
-                            val parents = Database.dbQuery {
-                                MenuItems.select {
-                                    MenuItems.parent eq null
-                                }.map { MenuItem(it) }
-                            }
-                            call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
-                                "title" to "Modifier une page",
-                                "item" to item,
-                                "menu" to MenuItems.fetchAdmin(user),
-                                "parents" to parents
-                            )))
-                        } ?: run {
-                            call.response.status(HttpStatusCode.NotFound)
-                            call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
-                        }
-                    } ?: run {
-                        call.response.status(HttpStatusCode.NotFound)
-                        call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
-                    }
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@get
             }
+            if (!user.hasPermission("admin.menu.edit")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val item = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
+                }
+            }
+            if (item == null) {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            val parents = Database.dbQuery {
+                MenuItems.select {
+                    MenuItems.parent eq null
+                }.map { MenuItem(it) }
+            }
+            call.respond(FreeMarkerContent("admin/menu/form.ftl", mapOf(
+                "title" to "Modifier une page",
+                "item" to item,
+                "menu" to MenuItems.fetchAdmin(user),
+                "parents" to parents
+            )))
         }
         post ("/{id}") {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.edit")) {
-                    call.parameters["id"]?.let { id ->
-                        Database.dbQuery {
-                            MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
-                        }?.let { item ->
-                            val params = call.receiveParameters()
-                            val title = params["title"]
-                            val url = params["url"]
-                            val position = params["position"]
-                            val parent = params["parent"]
-                            if (title != null && url != null && position != null) {
-                                Database.dbQuery {
-                                    MenuItems.update({ MenuItems.id eq item.id }) {
-                                        it[MenuItems.title] = title
-                                        it[MenuItems.url] = url
-                                        it[MenuItems.position] = position.toInt()
-                                        it[MenuItems.parent] = parent?.let { if (it == "") null else it }
-                                    }
-                                }
-                                call.respondRedirect("/admin/menu")
-                            } else {
-                                call.response.status(HttpStatusCode.BadRequest)
-                                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
-                            }
-                        } ?: run {
-                            call.response.status(HttpStatusCode.NotFound)
-                            call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
-                        }
-                    } ?: run {
-                        call.response.status(HttpStatusCode.NotFound)
-                        call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
-                    }
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@post
             }
+            if (!user.hasPermission("admin.menu.edit")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@post
+            }
+            val item = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
+                }
+            }
+            if (item == null) {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@post
+            }
+            val params = call.receiveParameters()
+            val title = params["title"]
+            val url = params["url"]
+            val position = params["position"]
+            val parent = params["parent"]
+            if (title == null || url == null || position == null) {
+                call.response.status(HttpStatusCode.BadRequest)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
+                return@post
+            }
+            Database.dbQuery {
+                MenuItems.update({ MenuItems.id eq item.id }) {
+                    it[MenuItems.title] = title
+                    it[MenuItems.url] = url
+                    it[MenuItems.position] = position.toInt()
+                    it[MenuItems.parent] = parent?.let { if (it == "") null else it }
+                }
+            }
+            call.respondRedirect("/admin/menu")
         }
         get ("/{id}/delete") {
-            getUser()?.let { user ->
-                if (user.hasPermission("admin.menu.delete")) {
-                    call.parameters["id"]?.let { id ->
-                        Database.dbQuery {
-                            MenuItems.deleteWhere {
-                                Op.build { MenuItems.id eq id }
-                            }
-                        }
-                        call.respondRedirect("/admin/menu")
-                    } ?: run {
-                        call.response.status(HttpStatusCode.NotFound)
-                        call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
-                    }
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
-                }
-            } ?: run {
+            val user = getUser()
+            if (user == null) {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
+                return@get
             }
+            if (!user.hasPermission("admin.menu.delete")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val item = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
+                }
+            }
+            if (item == null) {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            Database.dbQuery {
+                MenuItems.deleteWhere {
+                    Op.build { MenuItems.id eq item.id }
+                }
+            }
+            call.respondRedirect("/admin/menu")
         }
     }
 }

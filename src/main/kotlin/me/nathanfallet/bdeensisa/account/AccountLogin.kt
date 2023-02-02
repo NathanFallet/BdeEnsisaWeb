@@ -37,20 +37,23 @@ fun Route.accountLogin() {
             ))
             return@post
         }
-        Database.dbQuery { Users.select { Users.email eq email }.map { User(it) }.singleOrNull() }
-                ?.takeIf { BCrypt.verifyer().verify(password.toCharArray(), it.password).verified }
-                ?.let {
-                    call.sessions.set(AccountSession(it.id))
-                    call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
-                } ?: run {
-                    call.respond(FreeMarkerContent(
-                        "account/login.ftl",
-                        mapOf(
-                            "title" to "Connexion",
-                            "error" to "Email ou mot de passe invalide !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                }
+
+        val user = Database.dbQuery {
+            Users.select { Users.email eq email }.map { User(it) }.singleOrNull()
+        }?.takeIf { BCrypt.verifyer().verify(password.toCharArray(), it.password).verified }
+        if (user == null) {
+            call.respond(FreeMarkerContent(
+                "account/login.ftl",
+                mapOf(
+                    "title" to "Connexion",
+                    "error" to "Email ou mot de passe invalide !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+
+        call.sessions.set(AccountSession(user.id))
+        call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
     }
 }

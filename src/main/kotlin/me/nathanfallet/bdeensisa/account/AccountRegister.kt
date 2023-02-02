@@ -92,126 +92,124 @@ fun Route.accountRegister() {
         ))
     }
     get("/register/{code}") {
-        call.parameters["code"]?.let { code ->
+        val request = call.parameters["code"]?.let { code ->
             Database.dbQuery {
                 RegistrationRequests.select { RegistrationRequests.code eq code }.map { RegistrationRequest(it) }.singleOrNull()
-            }?.let { request ->
-                call.respond(FreeMarkerContent(
-                    "account/register.ftl",
-                    mapOf(
-                        "title" to "Inscription",
-                        "request" to request,
-                        "redirect" to call.request.queryParameters["redirect"]
-                    )
-                ))
-            } ?: run {
-                call.response.status(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             }
-        } ?: run {
+        }
+        if (request == null) {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+            return@get
         }
+
+        call.respond(FreeMarkerContent(
+            "account/register.ftl",
+            mapOf(
+                "title" to "Inscription",
+                "request" to request,
+                "redirect" to call.request.queryParameters["redirect"]
+            )
+        ))
     }
     post("/register/{code}") {
-        call.parameters["code"]?.let { code ->
+        val request = call.parameters["code"]?.let { code ->
             Database.dbQuery {
                 RegistrationRequests.select { RegistrationRequests.code eq code }.map { RegistrationRequest(it) }.singleOrNull()
-            }?.let { request ->
-                val params = call.receiveParameters()
-                val firstName = params["first_name"]
-                val lastName = params["last_name"]
-                val option = params["option"]
-                val year = params["year"]
-                val password = params["password"]
-                val password2 = params["password2"]
-                if (
-                    firstName == null ||
-                    lastName == null ||
-                    option == null ||
-                    year == null ||
-                    password == null ||
-                    password2 == null
-                ) {
-                    call.respond(FreeMarkerContent(
-                        "account/register.ftl",
-                        mapOf(
-                            "title" to "Inscription",
-                            "error" to "Remplissez tous les champs !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                    return@post
-                }
-                if (!listOf("ir", "ase", "meca", "tf", "gi").contains(option)) {
-                    call.respond(FreeMarkerContent(
-                        "account/register.ftl",
-                        mapOf(
-                            "title" to "Inscription",
-                            "error" to "Option invalide !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                    return@post
-                }
-                if (!listOf("1A", "2A", "3A", "other").contains(year)) {
-                    call.respond(FreeMarkerContent(
-                        "account/register.ftl",
-                        mapOf(
-                            "title" to "Inscription",
-                            "error" to "Année invalide !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                    return@post
-                }
-                if (password != password2) {
-                    call.respond(FreeMarkerContent(
-                        "account/register.ftl",
-                        mapOf(
-                            "title" to "Inscription",
-                            "error" to "Les mots de passe ne correspondent pas !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                    return@post
-                }
-
-                Database.dbQuery {
-                    RegistrationRequests.deleteWhere {
-                        Op.build { RegistrationRequests.code eq request.code }
-                    }
-                    Users.insert {
-                        it[Users.id] = Users.generateId()
-                        it[Users.firstName] = firstName
-                        it[Users.lastName] = lastName
-                        it[Users.email] = request.email
-                        it[Users.option] = option
-                        it[Users.year] = year
-                        it[Users.password] = BCrypt.withDefaults().hashToString(12, password.toCharArray())
-                    }
-                }.resultedValues?.singleOrNull()?.let {
-                    call.sessions.set(AccountSession(it[Users.id]))
-                    call.respondRedirect(
-                        call.request.queryParameters["redirect"] ?: "/account/profile"
-                    )
-                } ?: run {
-                    call.respond(FreeMarkerContent(
-                        "account/register.ftl",
-                        mapOf(
-                            "title" to "Inscription",
-                            "error" to "Erreur lors de l'inscription !",
-                            "redirect" to call.request.queryParameters["redirect"]
-                        )
-                    ))
-                }
-            } ?: run {
-                call.response.status(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             }
-        } ?: run {
+        }
+        if (request == null) {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+            return@post
         }
+
+        val params = call.receiveParameters()
+        val firstName = params["first_name"]
+        val lastName = params["last_name"]
+        val option = params["option"]
+        val year = params["year"]
+        val password = params["password"]
+        val password2 = params["password2"]
+        if (
+            firstName == null ||
+            lastName == null ||
+            option == null ||
+            year == null ||
+            password == null ||
+            password2 == null
+        ) {
+            call.respond(FreeMarkerContent(
+                "account/register.ftl",
+                mapOf(
+                    "title" to "Inscription",
+                    "error" to "Remplissez tous les champs !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+        if (!listOf("ir", "ase", "meca", "tf", "gi").contains(option)) {
+            call.respond(FreeMarkerContent(
+                "account/register.ftl",
+                mapOf(
+                    "title" to "Inscription",
+                    "error" to "Option invalide !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+        if (!listOf("1A", "2A", "3A", "other").contains(year)) {
+            call.respond(FreeMarkerContent(
+                "account/register.ftl",
+                mapOf(
+                    "title" to "Inscription",
+                    "error" to "Année invalide !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+        if (password != password2) {
+            call.respond(FreeMarkerContent(
+                "account/register.ftl",
+                mapOf(
+                    "title" to "Inscription",
+                    "error" to "Les mots de passe ne correspondent pas !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+
+        val user = Database.dbQuery {
+            RegistrationRequests.deleteWhere {
+                Op.build { RegistrationRequests.code eq request.code }
+            }
+            Users.insert {
+                it[Users.id] = Users.generateId()
+                it[Users.firstName] = firstName
+                it[Users.lastName] = lastName
+                it[Users.email] = request.email
+                it[Users.option] = option
+                it[Users.year] = year
+                it[Users.password] = BCrypt.withDefaults().hashToString(12, password.toCharArray())
+            }
+        }.resultedValues?.map{ User(it) }?.singleOrNull()
+        if (user == null) {
+            call.respond(FreeMarkerContent(
+                "account/register.ftl",
+                mapOf(
+                    "title" to "Inscription",
+                    "error" to "Erreur lors de l'inscription !",
+                    "redirect" to call.request.queryParameters["redirect"]
+                )
+            ))
+            return@post
+        }
+
+        call.sessions.set(AccountSession(user.id))
+        call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
     }
 }

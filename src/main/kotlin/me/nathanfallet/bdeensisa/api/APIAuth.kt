@@ -34,7 +34,7 @@ fun Route.apiAuth() {
             }
 
             // Check code and client
-            Database.dbQuery {
+            val user = Database.dbQuery {
                 LoginAuthorizes
                     .select { LoginAuthorizes.code eq code.code }
                     .map {
@@ -42,40 +42,42 @@ fun Route.apiAuth() {
                         Users.customJoin().select { Users.id eq userId }.mapUser(true).singleOrNull()
                     }
                     .singleOrNull()
-            }?.let {
-                // Delete code
-                Database.dbQuery {
-                    LoginAuthorizes.deleteWhere { Op.build { LoginAuthorizes.code eq code.code } }
-                }
+            }
+            if (user == null) {
+                call.response.status(HttpStatusCode.Unauthorized)
+                call.respond(mapOf("error" to "Invalid credentials"))
+                return@post
+            }
+            // Delete code
+            Database.dbQuery {
+                LoginAuthorizes.deleteWhere { Op.build { LoginAuthorizes.code eq code.code } }
+            }
 
-                // Generate JWT
+            // Generate JWT
+            val token = JWT.create()
+                .withSubject(user.id)
+                .withAudience(audience)
+                .withIssuer(issuer)
+                .withExpiresAt(Date(System.currentTimeMillis() + expiration))
+                .sign(Algorithm.HMAC256(secret))
+            call.respond(UserToken(token, user))
+        }
+        authenticate("api-jwt") {
+            get {
+                val user = getUser()
+                if (user == null) {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    call.respond(mapOf("error" to "Invalid user"))
+                    return@get
+                }
+                // Generate a new token
                 val token = JWT.create()
-                    .withSubject(it.id)
+                    .withSubject(user.id)
                     .withAudience(audience)
                     .withIssuer(issuer)
                     .withExpiresAt(Date(System.currentTimeMillis() + expiration))
                     .sign(Algorithm.HMAC256(secret))
-                call.respond(UserToken(token, it))
-            } ?: run {
-                call.response.status(HttpStatusCode.Unauthorized)
-                call.respond(mapOf("error" to "Invalid credentials"))
-            }
-        }
-        authenticate("api-jwt") {
-            get {
-                getUser()?.let { user ->
-                    // Generate a new token
-                    val token = JWT.create()
-                        .withSubject(user.id)
-                        .withAudience(audience)
-                        .withIssuer(issuer)
-                        .withExpiresAt(Date(System.currentTimeMillis() + expiration))
-                        .sign(Algorithm.HMAC256(secret))
-                    call.respond(UserToken(token, user))
-                } ?: run {
-                    call.response.status(HttpStatusCode.Unauthorized)
-                    call.respond(mapOf("error" to "Invalid user"))
-                }
+                call.respond(UserToken(token, user))
             }
         }
     }

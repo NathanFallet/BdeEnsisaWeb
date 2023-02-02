@@ -16,28 +16,34 @@ fun Route.accountAuthorize() {
     val redirect = this.environment!!.config.property("mobile.client.redirect").getString()
 
     get("/authorize") {
-        getUser()?.let { user ->
-            Database.dbQuery {
-                val expiration = Clock.System.now()
-                    .plus(1, DateTimeUnit.HOUR, TimeZone.currentSystemDefault())
-                LoginAuthorizes.insert {
-                    it[LoginAuthorizes.code] = LoginAuthorizes.generateCode()
-                    it[LoginAuthorizes.user] = user.id
-                    it[LoginAuthorizes.expiration] = expiration.toString()
-                }.resultedValues?.map { LoginAuthorize(it) }?.singleOrNull()
-            }
-        }?.let { auth ->
-            val separator = if (redirect.contains("?")) "&" else "?"
-            val url = "$redirect${separator}code=${auth.code}".replace("&", "&amp;")
-            call.respond(FreeMarkerContent(
-                "account/redirect.ftl",
-                mapOf(
-                    "title" to "Redirection",
-                    "redirectUrl" to url
-                )
-            ))
-        } ?: run {
+        val user = getUser()
+        if (user == null) {
             call.respondRedirect("/account/login?redirect=/account/authorize")
+            return@get
         }
+
+        val auth = Database.dbQuery {
+            val expiration = Clock.System.now()
+                .plus(1, DateTimeUnit.HOUR, TimeZone.currentSystemDefault())
+            LoginAuthorizes.insert {
+                it[LoginAuthorizes.code] = LoginAuthorizes.generateCode()
+                it[LoginAuthorizes.user] = user.id
+                it[LoginAuthorizes.expiration] = expiration.toString()
+            }.resultedValues?.map { LoginAuthorize(it) }?.singleOrNull()
+        }
+        if (auth == null) {
+            call.respond(HttpStatusCode.InternalServerError)
+            return@get
+        }
+
+        val separator = if (redirect.contains("?")) "&" else "?"
+        val url = "$redirect${separator}code=${auth.code}".replace("&", "&amp;")
+        call.respond(FreeMarkerContent(
+            "account/redirect.ftl",
+            mapOf(
+                "title" to "Redirection",
+                "redirectUrl" to url
+            )
+        ))
     }
 }

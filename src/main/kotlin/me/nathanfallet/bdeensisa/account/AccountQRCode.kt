@@ -17,14 +17,15 @@ fun Route.accountQRCode() {
     val users = this.environment!!.config.property("mobile.client.users").getString()
 
     get ("/qrcode") {
-        getUser()?.let { user ->
-            QRCode(users.replace("%s", user.id.toString())).render().getBytes("PNG").let { bytes ->
-                call.response.header("Content-Type", "image/png")
-                call.respond(bytes)
-            }
-        } ?: run {
+        val user = getUser()
+        if (user == null) {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+            return@get
         }
+
+        val bytes = QRCode(users.replace("%s", user.id.toString())).render().getBytes("PNG")
+        call.response.header("Content-Type", "image/png")
+        call.respond(bytes)
     }
 }

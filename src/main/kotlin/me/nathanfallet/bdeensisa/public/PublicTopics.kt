@@ -29,55 +29,57 @@ fun Route.publicTopics() {
             ))
         }
         get("/suggest") {
-            getUser()?.let {
+            val user = getUser()
+            if (user == null) {
+                call.respondRedirect("/account/login?redirect=/topics/suggest")
+                return@get
+            }
+            call.respond(FreeMarkerContent(
+                "public/topics/suggest.ftl",
+                mapOf(
+                    "title" to "Suggérer une affaire",
+                    "menu" to MenuItems.fetch()
+                )
+            ))
+        }
+        post("/suggest") {
+            val user = getUser()
+            if (user == null) {
+                call.respondRedirect("/account/login?redirect=/topics/suggest")
+                return@post
+            }
+            val params = call.receiveParameters()
+            val title = params["title"]
+            val content = params["content"]
+            if (title == null || content == null) {
                 call.respond(FreeMarkerContent(
                     "public/topics/suggest.ftl",
                     mapOf(
                         "title" to "Suggérer une affaire",
-                        "menu" to MenuItems.fetch()
+                        "menu" to MenuItems.fetch(),
+                        "error" to true
                     )
                 ))
-            } ?: run {
-                call.respondRedirect("/account/login?redirect=/topics/suggest")
+                return@post
             }
-        }
-        post("/suggest") {
-            getUser()?.let { user ->
-                val params = call.receiveParameters()
-                val title = params["title"]
-                val content = params["content"]
-                if (title != null && content != null) {
-                    Database.dbQuery {
-                        Topics.insert {
-                            it[Topics.id] = Topics.generateId()
-                            it[Topics.title] = title
-                            it[Topics.content] = content
-                            it[Topics.validated] = false
-                            it[Topics.userId] = user.id
-                            it[Topics.createdAt] = Clock.System.now().toString()
-                        }
-                    }
-                    call.respond(FreeMarkerContent(
-                        "public/topics/suggest.ftl",
-                        mapOf(
-                            "title" to "Suggérer une affaire",
-                            "menu" to MenuItems.fetch(),
-                            "success" to true
-                        )
-                    ))
-                } else {
-                    call.respond(FreeMarkerContent(
-                        "public/topics/suggest.ftl",
-                        mapOf(
-                            "title" to "Suggérer une affaire",
-                            "menu" to MenuItems.fetch(),
-                            "error" to true
-                        )
-                    ))
+            Database.dbQuery {
+                Topics.insert {
+                    it[Topics.id] = Topics.generateId()
+                    it[Topics.title] = title
+                    it[Topics.content] = content
+                    it[Topics.validated] = false
+                    it[Topics.userId] = user.id
+                    it[Topics.createdAt] = Clock.System.now().toString()
                 }
-            } ?: run {
-                call.respondRedirect("/account/login?redirect=/topics/suggest")
             }
+            call.respond(FreeMarkerContent(
+                "public/topics/suggest.ftl",
+                mapOf(
+                    "title" to "Suggérer une affaire",
+                    "menu" to MenuItems.fetch(),
+                    "success" to true
+                )
+            ))
         }
     }
 }

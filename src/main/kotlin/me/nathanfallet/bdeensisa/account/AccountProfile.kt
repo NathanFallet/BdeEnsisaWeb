@@ -14,23 +14,25 @@ import org.jetbrains.exposed.sql.*
 
 fun Route.accountProfile() {
     get ("/profile") {
-        getUser()?.let { user ->
-            val cotisant = Database.dbQuery {
-                Cotisants.select {
-                    Cotisants.userId eq user.id and (Cotisants.expiration greater Clock.System.now().toString())
-                }.map { Cotisant(it) }.singleOrNull()
-            }
-            call.respond(FreeMarkerContent(
-                "account/profile.ftl",
-                mapOf(
-                    "title" to "Mon profil",
-                    "user" to user,
-                    "cotisant" to cotisant,
-                    "menu" to MenuItems.fetch()
-                )
-            ))
-        } ?: run {
+        val user = getUser()
+        if (user == null) {
             call.respondRedirect("/account/login")
+            return@get
         }
+
+        val cotisant = Database.dbQuery {
+            Cotisants.select {
+                Cotisants.userId eq user.id and (Cotisants.expiration greater Clock.System.now().toString())
+            }.map { Cotisant(it) }.singleOrNull()
+        }
+        call.respond(FreeMarkerContent(
+            "account/profile.ftl",
+            mapOf(
+                "title" to "Mon profil",
+                "user" to user,
+                "cotisant" to cotisant,
+                "menu" to MenuItems.fetch()
+            )
+        ))
     }
 }

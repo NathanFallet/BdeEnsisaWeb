@@ -16,8 +16,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminTopics() {
     route("/topics") {
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@get
             }
@@ -40,8 +39,7 @@ fun Route.adminTopics() {
             )))
         }
         get ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@get
             }
@@ -56,8 +54,7 @@ fun Route.adminTopics() {
             )))
         }
         post ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@post
             }
@@ -88,8 +85,7 @@ fun Route.adminTopics() {
             call.respondRedirect("/admin/topics")
         }
         get ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@get
             }
@@ -105,8 +101,7 @@ fun Route.adminTopics() {
                         .select { Topics.id eq id }.map { Topic(it, User(it)) }
                         .singleOrNull()
                 }
-            }
-            if (topic == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
@@ -118,8 +113,7 @@ fun Route.adminTopics() {
             )))
         }
         post ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@post
             }
@@ -134,8 +128,7 @@ fun Route.adminTopics() {
                         .select { Topics.id eq id }.map { Topic(it) }
                         .singleOrNull()
                 }
-            }
-            if (topic == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@post
@@ -159,8 +152,7 @@ fun Route.adminTopics() {
             call.respondRedirect("/admin/topics")
         }
         get ("/{id}/delete") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@get
             }
@@ -175,8 +167,7 @@ fun Route.adminTopics() {
                         .select { Topics.id eq id }.map { Topic(it) }
                         .singleOrNull()
                 }
-            }
-            if (topic == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get

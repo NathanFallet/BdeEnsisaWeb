@@ -29,8 +29,7 @@ fun Route.publicQuestions() {
             ))
         }
         get("/ask") {
-            val user = getUser()
-            if (user == null) {
+            getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/questions/ask")
                 return@get
             }
@@ -43,8 +42,7 @@ fun Route.publicQuestions() {
             ))
         }
         post("/ask") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/questions/ask")
                 return@post
             }

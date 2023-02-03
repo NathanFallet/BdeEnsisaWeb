@@ -16,8 +16,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminEvents() {
     route("/events") {
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
             }
@@ -40,8 +39,7 @@ fun Route.adminEvents() {
             )))
         }
         get ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
             }
@@ -60,8 +58,7 @@ fun Route.adminEvents() {
             )))
         }
         post ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@post
             }
@@ -94,8 +91,7 @@ fun Route.adminEvents() {
             call.respondRedirect("/admin/events")
         }
         get ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
             }
@@ -111,8 +107,7 @@ fun Route.adminEvents() {
                         .select { Events.id eq id }.map { Event(it, Topic(it)) }
                         .singleOrNull()
                 }
-            }
-            if (event == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
@@ -128,8 +123,7 @@ fun Route.adminEvents() {
             )))
         }
         post ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@post
             }
@@ -144,8 +138,7 @@ fun Route.adminEvents() {
                         .select { Events.id eq id }.map { Event(it) }
                         .singleOrNull()
                 }
-            }
-            if (event == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@post
@@ -173,8 +166,7 @@ fun Route.adminEvents() {
             call.respondRedirect("/admin/events")
         }
         get ("/{id}/delete") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
             }
@@ -189,8 +181,7 @@ fun Route.adminEvents() {
                         .select { Events.id eq id }.map { Event(it) }
                         .singleOrNull()
                 }
-            }
-            if (event == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get

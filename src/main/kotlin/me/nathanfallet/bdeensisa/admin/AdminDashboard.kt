@@ -15,8 +15,7 @@ import org.jetbrains.exposed.sql.*
 
 fun Route.adminDashboard() {
     get {
-        val user = getUser()
-        if (user == null) {
+        val user = getUser() ?: run {
             call.respondRedirect("/account/login?redirect=/admin")
             return@get
         }
@@ -25,7 +24,6 @@ fun Route.adminDashboard() {
             call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
             return@get
         }
-
         val cotisantsCount = Database.dbQuery {
             Cotisants.select { Cotisants.expiration greater Clock.System.now().toString() }.count()
         }

@@ -15,8 +15,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminMenu() {
     route("/menu") {
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
             }
@@ -35,8 +34,7 @@ fun Route.adminMenu() {
             )))
         }
         get ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
             }
@@ -57,8 +55,7 @@ fun Route.adminMenu() {
             )))
         }
         post ("/new") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@post
             }
@@ -89,8 +86,7 @@ fun Route.adminMenu() {
             call.respondRedirect("/admin/menu")
         }
         get ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
             }
@@ -103,8 +99,7 @@ fun Route.adminMenu() {
                 Database.dbQuery {
                     MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
                 }
-            }
-            if (item == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
@@ -122,8 +117,7 @@ fun Route.adminMenu() {
             )))
         }
         post ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@post
             }
@@ -136,8 +130,7 @@ fun Route.adminMenu() {
                 Database.dbQuery {
                     MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
                 }
-            }
-            if (item == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@post
@@ -163,8 +156,7 @@ fun Route.adminMenu() {
             call.respondRedirect("/admin/menu")
         }
         get ("/{id}/delete") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
             }
@@ -177,8 +169,7 @@ fun Route.adminMenu() {
                 Database.dbQuery {
                     MenuItems.select { MenuItems.id eq id }.map { MenuItem(it) }.singleOrNull()
                 }
-            }
-            if (item == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get

@@ -16,12 +16,10 @@ fun Route.accountAuthorize() {
     val redirect = this.environment!!.config.property("mobile.client.redirect").getString()
 
     get("/authorize") {
-        val user = getUser()
-        if (user == null) {
+        val user = getUser() ?: run {
             call.respondRedirect("/account/login?redirect=/account/authorize")
             return@get
         }
-
         val auth = Database.dbQuery {
             val expiration = Clock.System.now()
                 .plus(1, DateTimeUnit.HOUR, TimeZone.currentSystemDefault())
@@ -30,12 +28,10 @@ fun Route.accountAuthorize() {
                 it[LoginAuthorizes.user] = user.id
                 it[LoginAuthorizes.expiration] = expiration.toString()
             }.resultedValues?.map { LoginAuthorize(it) }?.singleOrNull()
-        }
-        if (auth == null) {
+        } ?: run {
             call.respond(HttpStatusCode.InternalServerError)
             return@get
         }
-
         val separator = if (redirect.contains("?")) "&" else "?"
         val url = "$redirect${separator}code=${auth.code}".replace("&", "&amp;")
         call.respond(FreeMarkerContent(

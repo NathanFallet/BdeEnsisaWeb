@@ -14,12 +14,10 @@ import org.jetbrains.exposed.sql.*
 
 fun Route.accountProfile() {
     get ("/profile") {
-        val user = getUser()
-        if (user == null) {
+        val user = getUser() ?: run {
             call.respondRedirect("/account/login")
             return@get
         }
-
         val cotisant = Database.dbQuery {
             Cotisants.select {
                 Cotisants.userId eq user.id and (Cotisants.expiration greater Clock.System.now().toString())

@@ -20,8 +20,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminUploads() {
     route("/uploads") {
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/uploads")
                 return@get
             }
@@ -44,8 +43,7 @@ fun Route.adminUploads() {
             )))
         }
         post {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/uploads")
                 return@post
             }

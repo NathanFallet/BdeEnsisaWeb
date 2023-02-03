@@ -29,8 +29,7 @@ fun Route.publicTopics() {
             ))
         }
         get("/suggest") {
-            val user = getUser()
-            if (user == null) {
+            getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/topics/suggest")
                 return@get
             }
@@ -43,8 +42,7 @@ fun Route.publicTopics() {
             ))
         }
         post("/suggest") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/topics/suggest")
                 return@post
             }

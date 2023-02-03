@@ -96,13 +96,11 @@ fun Route.accountRegister() {
             Database.dbQuery {
                 RegistrationRequests.select { RegistrationRequests.code eq code }.map { RegistrationRequest(it) }.singleOrNull()
             }
-        }
-        if (request == null) {
+        } ?: run {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             return@get
         }
-
         call.respond(FreeMarkerContent(
             "account/register.ftl",
             mapOf(
@@ -117,13 +115,11 @@ fun Route.accountRegister() {
             Database.dbQuery {
                 RegistrationRequests.select { RegistrationRequests.code eq code }.map { RegistrationRequest(it) }.singleOrNull()
             }
-        }
-        if (request == null) {
+        } ?: run {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             return@post
         }
-
         val params = call.receiveParameters()
         val firstName = params["first_name"]
         val lastName = params["last_name"]
@@ -182,7 +178,6 @@ fun Route.accountRegister() {
             ))
             return@post
         }
-
         val user = Database.dbQuery {
             RegistrationRequests.deleteWhere {
                 Op.build { RegistrationRequests.code eq request.code }
@@ -196,8 +191,7 @@ fun Route.accountRegister() {
                 it[Users.year] = year
                 it[Users.password] = BCrypt.withDefaults().hashToString(12, password.toCharArray())
             }
-        }.resultedValues?.map{ User(it) }?.singleOrNull()
-        if (user == null) {
+        }.resultedValues?.map{ User(it) }?.singleOrNull() ?: run {
             call.respond(FreeMarkerContent(
                 "account/register.ftl",
                 mapOf(
@@ -208,7 +202,6 @@ fun Route.accountRegister() {
             ))
             return@post
         }
-
         call.sessions.set(AccountSession(user.id))
         call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
     }

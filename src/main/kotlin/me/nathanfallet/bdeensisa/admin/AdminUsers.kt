@@ -16,8 +16,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.adminUsers() {
     route("/users") {
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/users")
                 return@get
             }
@@ -36,8 +35,7 @@ fun Route.adminUsers() {
             )))
         }
         get ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/users")
                 return@get
             }
@@ -50,8 +48,7 @@ fun Route.adminUsers() {
                 Database.dbQuery {
                     Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                 }
-            }
-            if (selectedUser == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
@@ -63,8 +60,7 @@ fun Route.adminUsers() {
             )))
         }
         post ("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/users")
                 return@post
             }
@@ -77,8 +73,7 @@ fun Route.adminUsers() {
                 Database.dbQuery {
                     Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                 }
-            }
-            if (selectedUser == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@post

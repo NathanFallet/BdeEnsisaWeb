@@ -15,8 +15,7 @@ fun Route.publicPages() {
     get {
         val page = Database.dbQuery {
             Pages.select { Pages.home eq true }.map { Page(it) }.singleOrNull()
-        }
-        if (page == null) {
+        } ?: run {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Aucune page d'accueil trouvée")))
             return@get
@@ -35,8 +34,7 @@ fun Route.publicPages() {
             Database.dbQuery {
                 Pages.select { Pages.url eq url }.map { Page(it) }.singleOrNull()
             }
-        }
-        if (page == null) {
+        } ?: run {
             call.response.status(HttpStatusCode.NotFound)
             call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
             return@get

@@ -37,11 +37,11 @@ fun Route.accountLogin() {
             ))
             return@post
         }
-
         val user = Database.dbQuery {
             Users.select { Users.email eq email }.map { User(it) }.singleOrNull()
-        }?.takeIf { BCrypt.verifyer().verify(password.toCharArray(), it.password).verified }
-        if (user == null) {
+        }
+        ?.takeIf { BCrypt.verifyer().verify(password.toCharArray(), it.password).verified }
+        ?: run {
             call.respond(FreeMarkerContent(
                 "account/login.ftl",
                 mapOf(
@@ -52,7 +52,6 @@ fun Route.accountLogin() {
             ))
             return@post
         }
-
         call.sessions.set(AccountSession(user.id))
         call.respondRedirect(call.request.queryParameters["redirect"] ?: "/account/profile")
     }

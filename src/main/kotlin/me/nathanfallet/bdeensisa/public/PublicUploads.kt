@@ -17,8 +17,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.publicUploads() {
     route("/uploads") {
         get ("/{name}") {
-            val name = call.parameters["name"]
-            if (name == null) {
+            val name = call.parameters["name"] ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get

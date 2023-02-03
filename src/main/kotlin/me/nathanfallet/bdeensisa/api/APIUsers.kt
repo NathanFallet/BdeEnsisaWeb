@@ -96,7 +96,7 @@ fun Route.apiUsers() {
                 call.respond(mapOf("error" to "Invalid user"))
                 return@get
             }
-            if (!user.hasPermission("!admin.users.view")) {
+            if (!user.hasPermission("admin.users.view")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(mapOf("error" to "Not allowed to view users"))
                 return@get

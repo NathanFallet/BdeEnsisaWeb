@@ -84,8 +84,17 @@ fun Route.apiUsers() {
             }
             val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
             val offset = call.request.queryParameters["offset"]?.toLongOrNull() ?: 0L
+            val search = call.request.queryParameters["search"]
             val users = Database.dbQuery {
-                Users.customJoin().selectAll().limit(limit, offset).mapUser(false)
+                val join = Users.customJoin()
+                val select = search?.let {
+                    join.select {
+                        Users.firstName like "%$it%" or
+                        (Users.lastName like "%$it%") or
+                        (Users.email like "%$it%")
+                    }
+                } ?: join.selectAll()
+                select.limit(limit, offset).mapUser(false)
             }
             call.respond(users)
         }

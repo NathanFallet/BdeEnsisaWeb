@@ -17,7 +17,10 @@ fun Route.publicTopics() {
     route("/topics") {
         get {
             val topics = Database.dbQuery {
-                Topics.select { Topics.validated eq true }.map { Topic(it) }
+                Topics
+                    .select { Topics.validated eq true }
+                    .orderBy(Topics.createdAt, SortOrder.DESC)
+                    .map { Topic(it) }
             }
             call.respond(FreeMarkerContent(
                 "public/topics/list.ftl",

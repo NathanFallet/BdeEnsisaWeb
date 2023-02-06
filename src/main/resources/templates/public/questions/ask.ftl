@@ -12,8 +12,8 @@
         </div>
         </#if>
         <#if error??>
-        <div class="alert alert-danger">
-            Veuillez remplir tous les champs du formulaire.
+        <div class="alert alert-danger text-white">
+            ${error}
         </div>
         </#if>
 

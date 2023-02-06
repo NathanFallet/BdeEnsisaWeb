@@ -46,6 +46,22 @@ fun Route.publicTopics() {
                 call.respondRedirect("/account/login?redirect=/topics/suggest")
                 return@post
             }
+            Database.dbQuery {
+                Topics.select {
+                    Topics.userId eq user.id and
+                    (Topics.createdAt greater (Clock.System.now().minus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())).toString())
+                }.firstOrNull()
+            }?.let {
+                call.respond(FreeMarkerContent(
+                    "public/topics/suggest.ftl",
+                    mapOf(
+                        "title" to "Suggérer une affaire",
+                        "menu" to MenuItems.fetch(),
+                        "error" to "Vous avez déjà suggéré une affaire il y a moins de 24h, veuillez attendre avant d'en suggérer une nouvelle."
+                    )
+                ))
+                return@post
+            }
             val params = call.receiveParameters()
             val title = params["title"]
             val content = params["content"]
@@ -75,7 +91,7 @@ fun Route.publicTopics() {
                 mapOf(
                     "title" to "Suggérer une affaire",
                     "menu" to MenuItems.fetch(),
-                    "success" to true
+                    "success" to "Veuillez remplir tous les champs du formulaire."
                 )
             ))
         }

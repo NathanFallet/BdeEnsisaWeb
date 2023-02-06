@@ -46,6 +46,22 @@ fun Route.publicQuestions() {
                 call.respondRedirect("/account/login?redirect=/questions/ask")
                 return@post
             }
+            Database.dbQuery {
+                Questions.select {
+                    Questions.userId eq user.id and
+                    (Questions.createdAt greater (Clock.System.now().minus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())).toString())
+                }.firstOrNull()
+            }?.let {
+                call.respond(FreeMarkerContent(
+                    "public/questions/ask.ftl",
+                    mapOf(
+                        "title" to "Poser une question",
+                        "menu" to MenuItems.fetch(),
+                        "error" to "Vous avez déjà posé une question il y a moins de 24h, veuillez attendre avant d'en poser une nouvelle."
+                    )
+                ))
+                return@post
+            }
             val params = call.receiveParameters()
             val content = params["content"]
             if (content == null) {
@@ -54,7 +70,7 @@ fun Route.publicQuestions() {
                     mapOf(
                         "title" to "Poser une question",
                         "menu" to MenuItems.fetch(),
-                        "error" to true
+                        "error" to "Veuillez remplir tous les champs du formulaire."
                     )
                 ))
                 return@post

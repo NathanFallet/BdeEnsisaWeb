@@ -49,7 +49,7 @@ fun Route.publicTopics() {
             Database.dbQuery {
                 Topics.select {
                     Topics.userId eq user.id and
-                    (Topics.createdAt greater (Clock.System.now().minus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())).toString())
+                    (Topics.createdAt greater Clock.System.now().minus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault()).toString())
                 }.firstOrNull()
             }?.let {
                 call.respond(FreeMarkerContent(

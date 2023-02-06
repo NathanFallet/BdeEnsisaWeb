@@ -75,7 +75,7 @@
 
                     <div class="d-flex justify-content-end mt-4">
                         <button class="btn btn-light m-0" type="button" onclick="oneYear();">1 an</button>
-                        <button class="btn btn-light m-0 ms-2" type="button" onclick="threeYears();">3 ans</button>
+                        <button class="btn btn-light m-0 ms-2" type="button" onclick="fiveYears();">Scolarité</button>
                         <input type="submit" class="btn bg-gradient-primary m-0 ms-2" value="Définir">
                     </div>
                 </form>
@@ -99,12 +99,12 @@
         date.setDate(31);
         document.getElementById("expiration").value = date.toISOString().split('T')[0];
     }
-    function threeYears() {
+    function fiveYears() {
         var date = new Date();
         if (date.getMonth() > 7) {
-            date.setFullYear(date.getFullYear() + 3);
+            date.setFullYear(date.getFullYear() + 5);
         } else {
-            date.setFullYear(date.getFullYear() + 2);
+            date.setFullYear(date.getFullYear() + 4);
         }
         date.setMonth(7);
         date.setDate(31);

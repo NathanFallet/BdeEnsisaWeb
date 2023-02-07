@@ -31,6 +31,9 @@ object Expiration {
             LoginAuthorizes.deleteWhere() {
                 Op.build { LoginAuthorizes.expiration less Clock.System.now().toString() }
             }
+            NotificationsTokens.deleteWhere() {
+                Op.build { NotificationsTokens.expiration less Clock.System.now().toString() }
+            }
         }
     }
 

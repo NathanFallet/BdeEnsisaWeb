@@ -98,14 +98,14 @@ fun Route.adminUsers() {
             }
             if (expiration != null) {
                 Database.dbQuery {
-                    if (selectedUser.cotisant != null) {
-                        Cotisants.update({ Cotisants.userId eq selectedUser.id }) {
+                    try {
+                        Cotisants.insert {
+                            it[Cotisants.userId] = selectedUser.id
                             it[Cotisants.expiration] = expiration.toString()
                             it[Cotisants.updatedAt] = Clock.System.now().toString()
                         }
-                    } else {
-                        Cotisants.insert {
-                            it[Cotisants.userId] = selectedUser.id
+                    } catch (e: Exception) {
+                        Cotisants.update({ Cotisants.userId eq selectedUser.id }) {
                             it[Cotisants.expiration] = expiration.toString()
                             it[Cotisants.updatedAt] = Clock.System.now().toString()
                         }

@@ -9,6 +9,8 @@
 
 The new website, built with [Kotlin](https://kotlinlang.org) and [Ktor](https://ktor.io).
 
+The mobile app source code is also available [here](https://github.com/NathanFallet/BdeEnsisaMobile).
+
 ## Start the server
 
 ```bash

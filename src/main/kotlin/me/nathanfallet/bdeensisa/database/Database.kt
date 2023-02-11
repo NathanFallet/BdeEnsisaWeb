@@ -1,6 +1,9 @@
 package me.nathanfallet.bdeensisa.database
 
+import java.util.Timer
 import kotlinx.coroutines.*
+import kotlinx.datetime.*
+import kotlin.concurrent.scheduleAtFixedRate
 import me.nathanfallet.bdeensisa.models.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
@@ -9,16 +12,26 @@ import io.ktor.server.application.Application
 
 object Database {
 
+    private lateinit var host: String
+    private lateinit var name: String
+    private lateinit var user: String
+    private lateinit var password: String
+
     fun init(application: Application) {
-        val host = application.environment.config.property("database.host").getString()
-        val name = application.environment.config.property("database.name").getString()
-        val user = application.environment.config.property("database.user").getString()
-        val password = application.environment.config.property("database.password").getString()
+        // Read configuration
+        host = application.environment.config.property("database.host").getString()
+        name = application.environment.config.property("database.name").getString()
+        user = application.environment.config.property("database.user").getString()
+        password = application.environment.config.property("database.password").getString()
+
+        // Connect to database
         val database = org.jetbrains.exposed.sql.Database.connect(
             "jdbc:mysql://$host:3306/$name",
             "com.mysql.cj.jdbc.Driver",
             user, password
         )
+
+        // Create tables (if needed)
         transaction(database) {
             SchemaUtils.create(MenuItems)
             SchemaUtils.create(Users)
@@ -33,9 +46,47 @@ object Database {
             //SchemaUtils.create(Tickets)
             SchemaUtils.create(Questions)
         }
+
+        // Launch expiration
+        Timer().scheduleAtFixedRate(0, 60 * 60 * 1000L) {
+            CoroutineScope(Job()).launch {
+                doExpiration()
+            }
+        }
+
+        // Launch backup
+        Timer().scheduleAtFixedRate(0, 24 * 60 * 60 * 1000L) {
+            CoroutineScope(Job()).launch {
+                doBackup()
+            }
+        }
     }
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
+
+    private suspend fun doExpiration() {
+        Database.dbQuery {
+            Cotisants.deleteWhere() {
+                Op.build { Cotisants.expiration less Clock.System.now().toString() }
+            }
+            RegistrationRequests.deleteWhere() {
+                Op.build { RegistrationRequests.expiration less Clock.System.now().toString() }
+            }
+            LoginAuthorizes.deleteWhere() {
+                Op.build { LoginAuthorizes.expiration less Clock.System.now().toString() }
+            }
+            NotificationsTokens.deleteWhere() {
+                Op.build { NotificationsTokens.expiration less Clock.System.now().toString() }
+            }
+        }
+    }
+
+    private suspend fun doBackup() {
+        Runtime.getRuntime().exec(
+            arrayOf("./backup.sh"),
+            arrayOf("DB_HOST=$host", "DB_NAME=$name", "DB_USER=$user", "DB_PASSWORD=$password")
+        )
+    }
 
 }

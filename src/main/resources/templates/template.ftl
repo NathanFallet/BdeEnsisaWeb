@@ -93,12 +93,22 @@
       <a href="https://www.instagram.com/bdensisa" class="btn btn-instagram btn-sm w-100 mb-3">Instagram</a>
       <a href="https://www.facebook.com/bdeensisa/" class="btn btn-facebook btn-sm w-100 mb-3">Facebook</a>
     </div>
-    <hr class="horizontal dark">
     <div class="sidenav-footer mx-3 my-3">
       <div class="card card-plain shadow-none" id="sidenavCard">
-        <div class="card-body text-center p-3 w-100">
+        <div class="card-body text-center p-3 pt-0 w-100">
           <div class="docs-info">
-            <p class="h6">Un problème avec le site ou l'app ?</p>
+            <p class="text-xs font-weight-bold">On est aussi sur mobile !</p>
+          </div>
+        </div>
+      </div>
+      <a href="https://apps.apple.com/app/bde-de-lensisa/id1669367752" class="btn btn-dark btn-sm w-100 mb-3">App Store</a>
+      <a href="https://play.google.com/store/apps/details?id=me.nathanfallet.bdeensisa" class="btn btn-dark btn-sm w-100 mb-3">Play Store</a>
+    </div>
+    <div class="sidenav-footer mx-3 my-3">
+      <div class="card card-plain shadow-none" id="sidenavCard">
+        <div class="card-body text-center p-3 pt-0 w-100">
+          <div class="docs-info">
+            <p class="text-xs font-weight-bold">Un problème avec le site ou l'app ?</p>
           </div>
         </div>
       </div>

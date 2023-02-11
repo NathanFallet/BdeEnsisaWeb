@@ -19,8 +19,9 @@ test -d "$DIR/uploads" && rm -rf "$DIR/uploads"
 # Database
 
 mkdir -p "$DIR/database"
-echo "Dumping database..."
-for t in $(mysql -NBA -h $DB_HOST -u $DB_USER -p$DB_PASSWORD -D $DB_NAME -e 'show tables'); do
+tables=$(mysql -NBA -h $DB_HOST -u $DB_USER -p$DB_PASSWORD -D $DB_NAME -e 'show tables')
+tables=$(echo $tables | sed 's/LoginAuthorizes//g' | sed 's/NotificationsTokens//g' | sed 's/RegistrationRequests//g')
+for t in $tables; do
     mysqldump --host="$DB_HOST" --result-file="$DIR/database/$t.sql" --user="$DB_USER" --password="$DB_PASSWORD" $DB_OPTIONS $DB_NAME $t
 done
 

@@ -14,6 +14,7 @@
                   <th>Email</th>
                   <th>Année/Option</th>
                   <th>Cotisant</th>
+                  <th>Permissions</th>
                 </tr>
               </thead>
               <tbody>
@@ -38,6 +39,12 @@
                     <div class="d-flex align-items-center">
                       <button class="btn btn-icon-only btn-rounded btn-outline-<#if user.cotisant??>success<#else>danger</#if> mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-<#if user.cotisant??>check<#else>times</#if>" aria-hidden="true"></i></button>
                       <span><#if user.cotisant??>Oui<#else>Non</#if></span>
+                    </div>
+                  </td>
+                  <td class="text-xs font-weight-bold">
+                    <div class="d-flex align-items-center">
+                      <button class="btn btn-icon-only btn-rounded btn-outline-<#if user.hasPermissions>success<#else>danger</#if> mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-<#if user.hasPermissions>check<#else>times</#if>" aria-hidden="true"></i></button>
+                      <span><#if user.hasPermissions>Oui<#else>Non</#if></span>
                     </div>
                   </td>
                 </tr>

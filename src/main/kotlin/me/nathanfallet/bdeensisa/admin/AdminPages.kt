@@ -38,7 +38,7 @@ fun Route.adminPages() {
                 call.respondRedirect("/account/login?redirect=/admin/pages")
                 return@get
             }
-            if (!user.hasPermission("admin.pages.new")) {
+            if (!user.hasPermission("admin.pages.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@get
@@ -53,7 +53,7 @@ fun Route.adminPages() {
                 call.respondRedirect("/account/login?redirect=/admin/pages")
                 return@post
             }
-            if (!user.hasPermission("admin.pages.new")) {
+            if (!user.hasPermission("admin.pages.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@post

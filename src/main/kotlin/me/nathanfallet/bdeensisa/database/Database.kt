@@ -64,7 +64,7 @@ object Database {
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
-    
+
     private suspend fun doExpiration() {
         Database.dbQuery {
             Cotisants.deleteWhere() {

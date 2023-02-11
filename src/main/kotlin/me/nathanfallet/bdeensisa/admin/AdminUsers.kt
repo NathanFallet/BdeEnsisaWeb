@@ -26,7 +26,7 @@ fun Route.adminUsers() {
                 return@get
             }
             val users = Database.dbQuery {
-                Users.customJoin().selectAll().mapUser(false)
+                Users.customJoin().selectAll().mapUser(true)
             }
             call.respond(FreeMarkerContent("admin/users/list.ftl", mapOf(
                 "title" to "Utilisateurs",
@@ -46,7 +46,7 @@ fun Route.adminUsers() {
             }
             val selectedUser = call.parameters["id"]?.let { id ->
                 Database.dbQuery {
-                    Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
+                    Users.customJoin().select { Users.id eq id }.mapUser(true).singleOrNull()
                 }
             } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
@@ -56,6 +56,7 @@ fun Route.adminUsers() {
             call.respond(FreeMarkerContent("admin/users/form.ftl", mapOf(
                 "title" to "Utilisateur",
                 "user" to selectedUser,
+                "permissions" to user.hasPermission("admin.permissions.view"),
                 "menu" to MenuItems.fetchAdmin(user)
             )))
         }
@@ -71,7 +72,7 @@ fun Route.adminUsers() {
             }
             val selectedUser = call.parameters["id"]?.let { id ->
                 Database.dbQuery {
-                    Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
+                    Users.customJoin().select { Users.id eq id }.mapUser(true).singleOrNull()
                 }
             } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
@@ -84,6 +85,7 @@ fun Route.adminUsers() {
             val year = params["year"]
             val option = params["option"]
             val expiration = params["expiration"]?.toLocalDate()
+            val permissions = params["permissions"] != null
             if (firstName != null && lastName != null && year != null && option != null) {
                 Database.dbQuery {
                     Users.update({ Users.id eq selectedUser.id }) {
@@ -108,6 +110,33 @@ fun Route.adminUsers() {
                         Cotisants.update({ Cotisants.userId eq selectedUser.id }) {
                             it[Cotisants.expiration] = expiration.toString()
                             it[Cotisants.updatedAt] = Clock.System.now().toString()
+                        }
+                    }
+                }
+                call.respondRedirect("/admin/users/${selectedUser.id}")
+                return@post
+            }
+            if (permissions && user.hasPermission("admin.permissions.edit")) {
+                val newPermissions = mutableListOf<String>()
+                params.forEach { key, value ->
+                    if (value.contains("on")) {
+                        val allowedPermissions = mutableListOf(key)
+                        while (allowedPermissions.last().replace(".*", "").contains('.')) {
+                            allowedPermissions.add(allowedPermissions.last().replace(".*", "").substringBeforeLast('.') + ".*")
+                        }
+                        if (newPermissions.none { allowedPermissions.contains(it) }) {
+                            newPermissions.add(key)
+                        }
+                    }
+                }
+                Database.dbQuery {
+                    Permissions.deleteWhere {
+                        Op.build { Permissions.userId eq selectedUser.id }
+                    }
+                    newPermissions.forEach { permission ->
+                        Permissions.insert {
+                            it[Permissions.userId] = selectedUser.id
+                            it[Permissions.permission] = permission
                         }
                     }
                 }

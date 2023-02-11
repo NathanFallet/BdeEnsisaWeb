@@ -47,7 +47,7 @@ fun Route.adminUploads() {
                 call.respondRedirect("/account/login?redirect=/admin/uploads")
                 return@post
             }
-            if (!user.hasPermission("admin.uploads.new")) {
+            if (!user.hasPermission("admin.uploads.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@post

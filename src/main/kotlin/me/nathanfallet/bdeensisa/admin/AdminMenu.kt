@@ -38,7 +38,7 @@ fun Route.adminMenu() {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
             }
-            if (!user.hasPermission("admin.menu.new")) {
+            if (!user.hasPermission("admin.menu.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@get
@@ -59,7 +59,7 @@ fun Route.adminMenu() {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@post
             }
-            if (!user.hasPermission("admin.menu.new")) {
+            if (!user.hasPermission("admin.menu.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@post

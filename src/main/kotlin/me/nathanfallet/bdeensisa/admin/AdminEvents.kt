@@ -43,7 +43,7 @@ fun Route.adminEvents() {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
             }
-            if (!user.hasPermission("admin.events.new")) {
+            if (!user.hasPermission("admin.events.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@get
@@ -62,7 +62,7 @@ fun Route.adminEvents() {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@post
             }
-            if (!user.hasPermission("admin.events.new")) {
+            if (!user.hasPermission("admin.events.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@post

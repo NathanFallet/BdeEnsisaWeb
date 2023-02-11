@@ -43,7 +43,7 @@ fun Route.adminTopics() {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@get
             }
-            if (!user.hasPermission("admin.topics.new")) {
+            if (!user.hasPermission("admin.topics.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@get
@@ -58,7 +58,7 @@ fun Route.adminTopics() {
                 call.respondRedirect("/account/login?redirect=/admin/topics")
                 return@post
             }
-            if (!user.hasPermission("admin.topics.new")) {
+            if (!user.hasPermission("admin.topics.create")) {
                 call.response.status(HttpStatusCode.Forbidden)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@post

@@ -16,7 +16,8 @@ import org.jetbrains.exposed.sql.*
 fun Route.publicClubs() {
     route("/clubs") {
         get {
-            val mine = getUser()?.let { user ->
+            val user = getUser()
+            val mine = user?.let {
                 Database.dbQuery {
                     ClubMemberships
                         .join(Clubs, JoinType.INNER, ClubMemberships.clubId, Clubs.id)
@@ -37,7 +38,9 @@ fun Route.publicClubs() {
                     "title" to "Clubs",
                     "clubs" to clubs,
                     "mine" to mine,
-                    "menu" to MenuItems.fetch()
+                    "join" to (user?.cotisant != null),
+                    "menu" to MenuItems.fetch(),
+                    "error" to call.request.queryParameters["error"]
                 )
             ))
         }
@@ -139,6 +142,44 @@ fun Route.publicClubs() {
                     "success" to true
                 )
             ))
+        }
+        get("/{id}/join") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/clubs")
+                return@get
+            }
+            if (user.cotisant == null) {
+                call.respondRedirect("/clubs?error=Vous devez %C3%AAtre cotisant pour pouvoir rejoindre un club.")
+                return@get
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .select { Clubs.id eq id }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Club non trouvé")))
+                return@get
+            }
+            Database.dbQuery {
+                ClubMemberships
+                    .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                    .firstOrNull()
+            }?.let {
+                call.respondRedirect("/clubs?error=Vous %C3%AAtes d%C3%A9j%C3%A0 membre de ce club.")
+                return@get
+            }
+            Database.dbQuery {
+                ClubMemberships.insert {
+                    it[ClubMemberships.clubId] = club.id
+                    it[ClubMemberships.userId] = user.id
+                    it[ClubMemberships.role] = "member"
+                }
+            }
+            call.respondRedirect("/clubs")
         }
     }
 }

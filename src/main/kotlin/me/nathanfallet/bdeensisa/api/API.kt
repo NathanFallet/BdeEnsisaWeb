@@ -11,6 +11,7 @@ fun Route.api() {
         apiAuth()
         apiEvents()
         apiTopics()
+        apiClubs()
         authenticate("api-jwt") {
             apiNotifications()
             apiUsers()

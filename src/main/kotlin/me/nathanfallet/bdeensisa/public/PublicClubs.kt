@@ -305,7 +305,7 @@ fun Route.publicClubs() {
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
             }
-            val membership = Database.dbQuery {
+            Database.dbQuery {
                 ClubMemberships
                     .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
                     .firstOrNull()

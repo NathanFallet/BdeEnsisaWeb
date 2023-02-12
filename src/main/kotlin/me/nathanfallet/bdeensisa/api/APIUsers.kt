@@ -14,8 +14,7 @@ import org.jetbrains.exposed.sql.*
 fun Route.apiUsers() {
     route("/users") {
         get("/me") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@get
@@ -23,8 +22,7 @@ fun Route.apiUsers() {
             call.respond(user)
         }
         put("/me") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@put
@@ -62,8 +60,7 @@ fun Route.apiUsers() {
                     it[Users.year] = upload.year ?: user.year!!
                 }
             }
-            val newUser = getUser()
-            if (newUser == null) {
+            val newUser = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@put
@@ -71,8 +68,7 @@ fun Route.apiUsers() {
             call.respond(newUser)
         }
         get {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@get
@@ -99,8 +95,7 @@ fun Route.apiUsers() {
             call.respond(users)
         }
         get("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@get
@@ -114,8 +109,7 @@ fun Route.apiUsers() {
                 Database.dbQuery {
                     Users.customJoin().select { Users.id eq id }.mapUser(true).singleOrNull()
                 }
-            }
-            if (selectedUser == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(mapOf("error" to "User not found"))
                 return@get
@@ -123,8 +117,7 @@ fun Route.apiUsers() {
             call.respond(selectedUser)
         }
         put("/{id}") {
-            val user = getUser()
-            if (user == null) {
+            val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid user"))
                 return@put
@@ -138,8 +131,7 @@ fun Route.apiUsers() {
                 Database.dbQuery {
                     Users.customJoin().select { Users.id eq id }.mapUser(false).singleOrNull()
                 }
-            }
-            if (selectedUser == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(mapOf("error" to "User not found"))
                 return@put
@@ -203,8 +195,7 @@ fun Route.apiUsers() {
             }
             val newUser = Database.dbQuery {
                 Users.customJoin().select { Users.id eq selectedUser.id }.mapUser(true).singleOrNull()
-            }
-            if (newUser == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(mapOf("error" to "User not found"))
                 return@put

@@ -34,6 +34,6 @@ object ClubMemberships : Table() {
     val clubId = varchar("club_id", 32)
     val role = varchar("role", 255)
 
-    override val primaryKey = PrimaryKey(userId)
+    override val primaryKey = PrimaryKey(arrayOf(userId, clubId))
 
 }

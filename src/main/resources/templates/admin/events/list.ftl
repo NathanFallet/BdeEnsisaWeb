@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
       <div>
-        <a href="/admin/events/new" class="btn btn-icon btn-outline-white">
+        <a href="/admin/events/new" class="btn btn-icon btn-outline-primary">
           Nouvel évènement
         </a>
       </div>

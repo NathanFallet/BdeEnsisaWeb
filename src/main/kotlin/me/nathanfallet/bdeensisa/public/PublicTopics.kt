@@ -74,7 +74,7 @@ fun Route.publicTopics() {
                     mapOf(
                         "title" to "Suggérer une affaire",
                         "menu" to MenuItems.fetch(),
-                        "error" to true
+                        "error" to "Veuillez remplir tous les champs du formulaire."
                     )
                 ))
                 return@post
@@ -94,7 +94,7 @@ fun Route.publicTopics() {
                 mapOf(
                     "title" to "Suggérer une affaire",
                     "menu" to MenuItems.fetch(),
-                    "success" to "Veuillez remplir tous les champs du formulaire."
+                    "success" to true
                 )
             ))
         }

@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
       <div>
-        <a href="/admin/menu/new" class="btn btn-icon btn-outline-white">
+        <a href="/admin/menu/new" class="btn btn-icon btn-outline-primary">
           Nouvel élément de menu
         </a>
       </div>

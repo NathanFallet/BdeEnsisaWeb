@@ -1,5 +1,6 @@
 package me.nathanfallet.bdeensisa.models
 
+import java.time.format.DateTimeFormatter
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -25,6 +26,16 @@ data class Club(
         row.getOrNull(Clubs.createdAt)?.toInstant(),
         row.getOrNull(Clubs.validated)
     )
+
+    val formatted: String
+        get() = DateTimeFormatter.ofPattern("'le' dd/MM/yyyy 'à' HH:mm").format(
+            createdAt?.toLocalDateTime(
+                TimeZone.currentSystemDefault()
+            )?.toJavaLocalDateTime()
+        )
+
+    val markdown: String
+        get() = description?.let { Markdown.render(it) } ?: ""
 
 }
 

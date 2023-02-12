@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
       <div>
-        <a href="/admin/pages/new" class="btn btn-icon btn-outline-primary">
+        <a href="/admin/pages/create" class="btn btn-icon btn-outline-primary">
           Nouvelle page
         </a>
       </div>

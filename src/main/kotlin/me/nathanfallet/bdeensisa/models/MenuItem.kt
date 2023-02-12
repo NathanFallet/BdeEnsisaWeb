@@ -90,6 +90,9 @@ object MenuItems : Table() {
         if (user.hasPermission("admin.uploads.view")) {
             items.add(MenuItem("uploads", "Téléchargements", "/admin/uploads"))
         }
+        if (user.hasPermission("admin.clubs.view")) {
+            items.add(MenuItem("clubs", "Clubs", "/admin/clubs"))
+        }
 
         return items
     }

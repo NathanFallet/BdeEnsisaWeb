@@ -3,8 +3,8 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
       <div>
-        <a href="/admin/menu/create" class="btn btn-icon btn-outline-primary">
-          Nouvel élément de menu
+        <a href="/admin/clubs/create" class="btn btn-icon btn-outline-primary">
+          Nouveau club
         </a>
       </div>
     </div>
@@ -16,29 +16,28 @@
               <thead class="thead-light">
                 <tr>
                   <th>Id</th>
-                  <th>Titre</th>
-                  <th>URL</th>
-                  <th>Position</th>
-                  <th>Parent</th>
+                  <th>Nom</th>
+                  <th>Date d'ajout</th>
+                  <th>Validé</th>
                 </tr>
               </thead>
               <tbody>
-                <#list menuitems as item>
+                <#list clubs as club>
                 <tr>
                   <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><a href="/admin/menu/${item.id}">${item.id}</a></span>
+                    <span class="my-2 text-xs"><a href="/admin/clubs/${club.id}">${club.id}</a></span>
                   </td>
                   <td class="font-weight-bold">
-                    <span class="my-2 text-xs">${item.title}</span>
+                    <span class="my-2 text-xs">${club.name}</span>
                   </td>
                   <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><a href="${item.url}">${item.url}</a></span>
+                    <span class="my-2 text-xs">${club.formatted}</span>
                   </td>
-                  <td class="font-weight-bold">
-                    <span class="my-2 text-xs">${item.position}</span>
-                  </td>
-                  <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><#if item.parent??><a href="/admin/menu/${item.parent}">${item.parent}</a><#else>Pas de parent</#if></span>
+                  <td class="text-xs font-weight-bold">
+                    <div class="d-flex align-items-center">
+                      <button class="btn btn-icon-only btn-rounded btn-outline-<#if club.validated>success<#else>danger</#if> mb-0 me-2 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-<#if club.validated>check<#else>times</#if>" aria-hidden="true"></i></button>
+                      <span><#if club.validated>Oui<#else>Non</#if></span>
+                    </div>
                   </td>
                 </tr>
                 </#list>

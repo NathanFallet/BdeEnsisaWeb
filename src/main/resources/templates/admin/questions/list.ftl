@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
       <div>
-        <a href="/admin/questions/new" class="btn btn-icon btn-outline-primary">
+        <a href="/admin/questions/create" class="btn btn-icon btn-outline-primary">
           Nouvelle question
         </a>
       </div>

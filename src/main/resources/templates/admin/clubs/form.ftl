@@ -2,7 +2,7 @@
 <@template.page>
 <div class="container-fluid py-4">
     <div class="card card-body mt-4">
-        <h6 class="mb-0"><#if club??>Modifier le<#else>Nouveau </#if>club</h6>
+        <h6 class="mb-0"><#if club??>Modifier le<#else>Nouveau</#if> club</h6>
         <p class="text-sm mb-0"><#if club??>Modifier un<#else>Créer un nouveau</#if> club</p>
         <hr class="horizontal dark my-3">
 
@@ -46,5 +46,27 @@
             </div>
         </form>
     </div>
+    <#if club??>
+    <div class="card card-body mt-4">
+        <h6 class="mb-0">Liste des membres du club</h6>
+        <hr class="horizontal dark my-3">
+
+        <div class="row">
+            <#list members as member>
+            <div class="col-lg-4 col-md-6">
+                <p class="text-sm text-bold mb-0">
+                    ${member.user.firstName} ${member.user.lastName}
+                    <#if member.role == "owner">
+                    <span class="badge bg-gradient-dark text-white float-end">Créateur</span>
+                    <#else>
+                    <span class="badge bg-gradient-success text-white float-end">Membre</span>
+                    </#if>
+                </p>
+                <p class="text-xs">${member.user.description}</p>
+            </div>
+            </#list>
+        </div>
+    </div>
+    </#if>
 </div>
 </@template.page>

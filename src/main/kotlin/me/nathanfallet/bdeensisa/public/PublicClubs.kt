@@ -143,6 +143,32 @@ fun Route.publicClubs() {
                 )
             ))
         }
+        get("/{id}") {
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .select { Clubs.id eq id and (Clubs.validated eq true) }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Club non trouvé")))
+                return@get
+            }
+            val members = Database.dbQuery {
+                ClubMemberships
+                    .join(Users, JoinType.INNER, ClubMemberships.userId, Users.id)
+                    .select { ClubMemberships.clubId eq club.id }
+                    .map { ClubMembership(it, User(it)) }
+            }
+            call.respond(FreeMarkerContent("public/clubs/details.ftl", mapOf(
+                "title" to club.name,
+                "club" to club,
+                "members" to members,
+                "menu" to MenuItems.fetch()
+            )))
+        }
         get("/{id}/join") {
             val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/clubs")

@@ -26,7 +26,7 @@
           <div class="card">
             <div class="card-body p-3">
                 <h6 class="mb-0 px-3 pt-3">
-                    ${membership.club.name}
+                    <a href="/clubs/${membership.club.id}">${membership.club.name}</a>
                     <#if !membership.club.validated>
                     <span class="badge bg-gradient-warning text-white float-end">En attente</span>
                     <#elseIf membership.role == "owner">
@@ -55,7 +55,7 @@
           <div class="card">
             <div class="card-body p-3">
                 <h6 class="mb-0 px-3 pt-3">
-                    ${club.name}
+                    <a href="/clubs/${club.id}">${club.name}</a>
                     <#if join>
                     <a href="/clubs/${club.id}/join" class="badge bg-gradient-info text-white float-end">Rejoindre</a>
                     </#if>

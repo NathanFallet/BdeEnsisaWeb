@@ -111,9 +111,16 @@ fun Route.adminClubs() {
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
             }
+            val members = Database.dbQuery {
+                ClubMemberships
+                    .join(Users, JoinType.INNER, ClubMemberships.userId, Users.id)
+                    .select { ClubMemberships.clubId eq club.id }
+                    .map { ClubMembership(it, User(it)) }
+            }
             call.respond(FreeMarkerContent("admin/clubs/form.ftl", mapOf(
                 "title" to "Modifier un club",
                 "club" to club,
+                "members" to members,
                 "menu" to MenuItems.fetchAdmin(user)
             )))
         }

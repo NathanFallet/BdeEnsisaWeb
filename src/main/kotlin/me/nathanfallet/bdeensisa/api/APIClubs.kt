@@ -74,6 +74,82 @@ fun Route.apiClubs() {
                 }
                 call.respond(clubs)
             }
+            post("/{id}/me") {
+                val user = getUser() ?: run {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    call.respond(mapOf("error" to "Invalid user"))
+                    return@post
+                }
+                val club = call.parameters["id"]?.let { id ->
+                    Database.dbQuery {
+                        Clubs
+                            .select { Clubs.id eq id and (Clubs.validated eq true) }
+                            .map { Club(it) }
+                            .firstOrNull()
+                    }
+                }?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "Club not found"))
+                    return@post
+                }
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                        .map { ClubMembership(it) }
+                        .firstOrNull()
+                }?.let {
+                    call.response.status(HttpStatusCode.Conflict)
+                    call.respond(mapOf("error" to "User already in club"))
+                    return@post
+                }
+                val membership = Database.dbQuery {
+                    ClubMemberships.insert {
+                        it[ClubMemberships.clubId] = club.id
+                        it[ClubMemberships.userId] = user.id
+                        it[ClubMemberships.role] = "member"
+                    }.resultedValues?.firstOrNull()?.let { ClubMembership(it) }
+                } ?: run {
+                    call.response.status(HttpStatusCode.InternalServerError)
+                    call.respond(mapOf("error" to "Unable to create membership"))
+                    return@post
+                }
+                call.respond(membership)
+            }
+            delete("/{id}/me") {
+                val user = getUser() ?: run {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    call.respond(mapOf("error" to "Invalid user"))
+                    return@delete
+                }
+                val club = call.parameters["id"]?.let { id ->
+                    Database.dbQuery {
+                        Clubs
+                            .select { Clubs.id eq id and (Clubs.validated eq true) }
+                            .map { Club(it) }
+                            .firstOrNull()
+                    }
+                }?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "Club not found"))
+                    return@delete
+                }
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                        .map { ClubMembership(it) }
+                        .firstOrNull()
+                } ?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "User not in club"))
+                    return@delete
+                }
+                Database.dbQuery {
+                    ClubMemberships.deleteWhere {
+                        Op.build { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                    }
+                }
+                call.respond(HttpStatusCode.NoContent)
+            }
         }
     }
 }

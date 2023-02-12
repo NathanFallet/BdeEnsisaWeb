@@ -54,14 +54,22 @@
         <div class="row">
             <#list members as member>
             <div class="col-lg-4 col-md-6">
-                <p class="text-sm text-bold mb-0">
-                    ${member.user.firstName} ${member.user.lastName}
+                <div class="dropdown float-end">
                     <#if member.role == "owner">
-                    <span class="badge bg-gradient-dark text-white float-end">Créateur</span>
+                    <a href="#" class="badge bg-gradient-dark text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Créateur</a>
+                    <#elseIf member.role == "admin">
+                    <a href="#" class="badge bg-gradient-dark text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Admin</a>
                     <#else>
-                    <span class="badge bg-gradient-success text-white float-end">Membre</span>
+                    <a href="#" class="badge bg-gradient-success text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Membre</a>
                     </#if>
-                </p>
+                    <ul class="dropdown-menu" aria-labelledby="role-${member.user.id}">
+                        <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/owner">Créateur</a></li>
+                        <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/admin">Admin</a></li>
+                        <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/member">Membre</a></li>
+                        <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/remove">Retirer</a></li>
+                    </ul>
+                </div>
+                <p class="text-sm text-bold mb-0">${member.user.firstName} ${member.user.lastName}</p>
                 <p class="text-xs">${member.user.description}</p>
             </div>
             </#list>

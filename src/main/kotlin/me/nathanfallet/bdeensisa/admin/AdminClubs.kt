@@ -64,10 +64,10 @@ fun Route.adminClubs() {
             }
             val params = call.receiveParameters()
             val name = params["name"]
-            val desciption = params["desciption"]
+            val description = params["description"]
             val information = params["information"]
             val validated = params["validated"] == "on"
-            if (name == null || desciption == null || information == null) {
+            if (name == null || description == null || information == null) {
                 call.response.status(HttpStatusCode.BadRequest)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
                 return@post
@@ -147,10 +147,10 @@ fun Route.adminClubs() {
             }
             val params = call.receiveParameters()
             val name = params["name"]
-            val desciption = params["desciption"]
+            val description = params["description"]
             val information = params["information"]
             val validated = params["validated"] == "on"
-            if (name == null || desciption == null || information == null) {
+            if (name == null || description == null || information == null) {
                 call.response.status(HttpStatusCode.BadRequest)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
                 return@post
@@ -190,6 +190,68 @@ fun Route.adminClubs() {
                 Clubs.delete(club.id)
             }
             call.respondRedirect("/admin/clubs")
+        }
+        get ("/{id}/members/{userId}/role/{role}") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/admin/clubs")
+                return@get
+            }
+            if (!user.hasPermission("admin.clubs.edit")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
+                return@get
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .select { Clubs.id eq id }.map { Club(it) }
+                        .singleOrNull()
+                }
+            } ?: run {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            val membership = call.parameters["userId"]?.let { userId ->
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq userId) }
+                        .map { ClubMembership(it) }
+                        .singleOrNull()
+                }
+            } ?: run {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            when (call.parameters["role"]) {
+                "owner", "admin", "member" -> {
+                    Database.dbQuery {
+                        ClubMemberships.update({
+                            ClubMemberships.clubId eq membership.clubId and
+                            (ClubMemberships.userId eq membership.userId)
+                        }) {
+                            it[ClubMemberships.role] = call.parameters["role"]!!
+                        }
+                    }
+                }
+                "remove" -> {
+                    Database.dbQuery {
+                        ClubMemberships.deleteWhere {
+                            Op.build {
+                                ClubMemberships.clubId eq membership.clubId and
+                                (ClubMemberships.userId eq membership.userId)
+                            }
+                        }
+                    }
+                } 
+                else -> {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
+                    return@get
+                }
+            }
+            call.respondRedirect("/admin/clubs/${club.id}")
         }
     }
 }

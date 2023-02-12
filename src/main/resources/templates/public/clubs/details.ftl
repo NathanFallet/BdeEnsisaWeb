@@ -18,6 +18,8 @@
                     ${member.user.firstName} ${member.user.lastName}
                     <#if member.role == "owner">
                     <span class="badge bg-gradient-dark text-white float-end">Créateur</span>
+                    <#elseIf member.role == "admin">
+                    <span class="badge bg-gradient-dark text-white float-end">Admin</span>
                     <#else>
                     <span class="badge bg-gradient-success text-white float-end">Membre</span>
                     </#if>

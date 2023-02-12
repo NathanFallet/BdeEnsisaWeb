@@ -80,6 +80,11 @@ fun Route.apiClubs() {
                     call.respond(mapOf("error" to "Invalid user"))
                     return@post
                 }
+                if (user.cotisant == null) {
+                    call.response.status(HttpStatusCode.Forbidden)
+                    call.respond(mapOf("error" to "User is not allowed to join clubs"))
+                    return@post
+                }
                 val club = call.parameters["id"]?.let { id ->
                     Database.dbQuery {
                         Clubs
@@ -149,6 +154,85 @@ fun Route.apiClubs() {
                     }
                 }
                 call.respond(HttpStatusCode.NoContent)
+            }
+            put("/{id}/members") {
+                val user = getUser() ?: run {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    call.respond(mapOf("error" to "Invalid user"))
+                    return@put
+                }
+                val club = call.parameters["id"]?.let { id ->
+                    Database.dbQuery {
+                        Clubs
+                            .select { Clubs.id eq id and (Clubs.validated eq true) }
+                            .map { Club(it) }
+                            .firstOrNull()
+                    }
+                }?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "Club not found"))
+                    return@put
+                }
+                val membership = Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                        .map { ClubMembership(it) }
+                        .firstOrNull()
+                } ?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "User not in club"))
+                    return@put
+                }
+                if (membership.role != "admin") {
+                    call.response.status(HttpStatusCode.Forbidden)
+                    call.respond(mapOf("error" to "User is not allowed to manage members"))
+                    return@put
+                }
+                val body = try {
+                    call.receive<ClubMembership>()
+                } catch (e: Exception) {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    call.respond(mapOf("error" to "Invalid body"))
+                    return@put
+                }
+                val targetMembership = Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq body.userId) }
+                        .map { ClubMembership(it) }
+                        .firstOrNull()
+                } ?: run {
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(mapOf("error" to "User not in club"))
+                    return@put
+                }
+                when (body.role) {
+                    "admin", "member" -> {
+                        Database.dbQuery {
+                            ClubMemberships.update({
+                                ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq body.userId)
+                            }) {
+                                it[ClubMemberships.role] = body.role
+                            }
+                        }
+                        call.respond(ClubMembership(
+                            clubId = targetMembership.clubId,
+                            userId = targetMembership.userId,
+                            role = body.role
+                        ))
+                    }
+                    "remove" -> {
+                        Database.dbQuery {
+                            ClubMemberships.deleteWhere {
+                                Op.build { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq body.userId) }
+                            }
+                        }
+                        call.respond(HttpStatusCode.NoContent)
+                    }
+                    else -> {
+                        call.response.status(HttpStatusCode.BadRequest)
+                        call.respond(mapOf("error" to "Invalid role"))
+                    }
+                }
             }
         }
     }

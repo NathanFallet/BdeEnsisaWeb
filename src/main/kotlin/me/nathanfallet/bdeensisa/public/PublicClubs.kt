@@ -131,7 +131,7 @@ fun Route.publicClubs() {
                 ClubMemberships.insert {
                     it[ClubMemberships.clubId] = id
                     it[ClubMemberships.userId] = user.id
-                    it[ClubMemberships.role] = "owner"
+                    it[ClubMemberships.role] = "admin"
                 }
             }
             call.respond(FreeMarkerContent(
@@ -153,7 +153,7 @@ fun Route.publicClubs() {
                 }
             } ?: run {
                 call.respond(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Club non trouvé")))
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
             }
             val members = Database.dbQuery {
@@ -162,12 +162,93 @@ fun Route.publicClubs() {
                     .select { ClubMemberships.clubId eq club.id }
                     .map { ClubMembership(it, User(it)) }
             }
+            val membership = getUser()?.let { user ->
+                members.find { it.userId == user.id }
+            }
             call.respond(FreeMarkerContent("public/clubs/details.ftl", mapOf(
+                "title" to club.name,
+                "club" to club,
+                "members" to members,
+                "membership" to membership,
+                "menu" to MenuItems.fetch()
+            )))
+        }
+        get("/{id}/edit") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/clubs/suggest")
+                return@get
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .join(ClubMemberships, JoinType.INNER, Clubs.id, ClubMemberships.clubId)
+                        .select {
+                            Clubs.id eq id and
+                            (Clubs.validated eq true) and
+                            (ClubMemberships.userId eq user.id) and
+                            (ClubMemberships.role eq "admin")
+                        }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            val members = Database.dbQuery {
+                ClubMemberships
+                    .join(Users, JoinType.INNER, ClubMemberships.userId, Users.id)
+                    .select { ClubMemberships.clubId eq club.id }
+                    .map { ClubMembership(it, User(it)) }
+            }
+            call.respond(FreeMarkerContent("public/clubs/edit.ftl", mapOf(
                 "title" to club.name,
                 "club" to club,
                 "members" to members,
                 "menu" to MenuItems.fetch()
             )))
+        }
+        post("/{id}/edit") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/clubs/suggest")
+                return@post
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .join(ClubMemberships, JoinType.INNER, Clubs.id, ClubMemberships.clubId)
+                        .select {
+                            Clubs.id eq id and
+                            (Clubs.validated eq true) and
+                            (ClubMemberships.userId eq user.id) and
+                            (ClubMemberships.role eq "admin")
+                        }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@post
+            }
+            val params = call.receiveParameters()
+            val name = params["name"]
+            val description = params["description"]
+            val information = params["information"]
+            if (name == null || description == null || information == null) {
+                call.response.status(HttpStatusCode.BadRequest)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Requête invalide")))
+                return@post
+            }
+            Database.dbQuery {
+                Clubs.update({ Clubs.id eq club.id }) {
+                    it[Clubs.name] = name
+                    it[Clubs.description] = description
+                    it[Clubs.information] = information
+                }
+            }
+            call.respondRedirect("/clubs/${club.id}")
         }
         get("/{id}/join") {
             val user = getUser() ?: run {
@@ -187,7 +268,7 @@ fun Route.publicClubs() {
                 }
             } ?: run {
                 call.respond(HttpStatusCode.NotFound)
-                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Club non trouvé")))
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
             }
             Database.dbQuery {
@@ -206,6 +287,102 @@ fun Route.publicClubs() {
                 }
             }
             call.respondRedirect("/clubs")
+        }
+        get("/{id}/leave") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/clubs")
+                return@get
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .select { Clubs.id eq id }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            val membership = Database.dbQuery {
+                ClubMemberships
+                    .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                    .firstOrNull()
+            } ?: run {
+                call.respondRedirect("/clubs?error=Vous n'%C3%AAtes pas membre de ce club.")
+                return@get
+            }
+            Database.dbQuery {
+                ClubMemberships.deleteWhere {
+                    Op.build { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq user.id) }
+                }
+            }
+            call.respondRedirect("/clubs")
+        }
+        get ("/{id}/members/{userId}/role/{role}") {
+            val user = getUser() ?: run {
+                call.respondRedirect("/account/login?redirect=/clubs")
+                return@get
+            }
+            val club = call.parameters["id"]?.let { id ->
+                Database.dbQuery {
+                    Clubs
+                        .join(ClubMemberships, JoinType.INNER, Clubs.id, ClubMemberships.clubId)
+                        .select {
+                            Clubs.id eq id and
+                            (Clubs.validated eq true) and
+                            (ClubMemberships.userId eq user.id) and
+                            (ClubMemberships.role eq "admin")
+                        }
+                        .map { Club(it) }
+                        .firstOrNull()
+                }
+            } ?: run {
+                call.respond(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            val membership = call.parameters["userId"]?.let { userId ->
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id and (ClubMemberships.userId eq userId) }
+                        .map { ClubMembership(it) }
+                        .singleOrNull()
+                }
+            } ?: run {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
+                return@get
+            }
+            when (call.parameters["role"]) {
+                "admin", "member" -> {
+                    Database.dbQuery {
+                        ClubMemberships.update({
+                            ClubMemberships.clubId eq membership.clubId and
+                            (ClubMemberships.userId eq membership.userId)
+                        }) {
+                            it[ClubMemberships.role] = call.parameters["role"]!!
+                        }
+                    }
+                }
+                "remove" -> {
+                    Database.dbQuery {
+                        ClubMemberships.deleteWhere {
+                            Op.build {
+                                ClubMemberships.clubId eq membership.clubId and
+                                (ClubMemberships.userId eq membership.userId)
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Requête invalide")))
+                    return@get
+                }
+            }
+            call.respondRedirect("/clubs/${club.id}")
         }
     }
 }

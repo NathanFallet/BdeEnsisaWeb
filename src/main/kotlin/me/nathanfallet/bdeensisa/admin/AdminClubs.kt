@@ -85,7 +85,7 @@ fun Route.adminClubs() {
                 ClubMemberships.insert {
                     it[ClubMemberships.clubId] = id
                     it[ClubMemberships.userId] = user.id
-                    it[ClubMemberships.role] = "owner"
+                    it[ClubMemberships.role] = "admin"
                 }
             }
             call.respondRedirect("/admin/clubs")
@@ -225,7 +225,7 @@ fun Route.adminClubs() {
                 return@get
             }
             when (call.parameters["role"]) {
-                "owner", "admin", "member" -> {
+                "admin", "member" -> {
                     Database.dbQuery {
                         ClubMemberships.update({
                             ClubMemberships.clubId eq membership.clubId and
@@ -244,7 +244,7 @@ fun Route.adminClubs() {
                             }
                         }
                     }
-                } 
+                }
                 else -> {
                     call.response.status(HttpStatusCode.BadRequest)
                     call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))

@@ -55,15 +55,12 @@
             <#list members as member>
             <div class="col-lg-4 col-md-6">
                 <div class="dropdown float-end">
-                    <#if member.role == "owner">
-                    <a href="#" class="badge bg-gradient-dark text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Créateur</a>
-                    <#elseIf member.role == "admin">
+                    <#if member.role == "admin">
                     <a href="#" class="badge bg-gradient-dark text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Admin</a>
                     <#else>
                     <a href="#" class="badge bg-gradient-success text-white dropdown-toggle" data-bs-toggle="dropdown" id="role-${member.user.id}">Membre</a>
                     </#if>
                     <ul class="dropdown-menu" aria-labelledby="role-${member.user.id}">
-                        <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/owner">Créateur</a></li>
                         <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/admin">Admin</a></li>
                         <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/member">Membre</a></li>
                         <li><a class="dropdown-item" href="/admin/clubs/${club.id}/members/${member.user.id}/role/remove">Retirer</a></li>

@@ -29,8 +29,6 @@
                     <a href="/clubs/${membership.club.id}">${membership.club.name}</a>
                     <#if !membership.club.validated>
                     <span class="badge bg-gradient-warning text-white float-end">En attente</span>
-                    <#elseIf membership.role == "owner">
-                    <span class="badge bg-gradient-dark text-white float-end">Créateur</span>
                     <#elseIf membership.role == "admin">
                     <span class="badge bg-gradient-dark text-white float-end">Admin</span>
                     <#else>

@@ -283,6 +283,33 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="ms-3">
+                                <input type="checkbox" id="admin.clubs.*" name="admin.clubs.*" />
+                                <label for="admin.clubs.*">admin.clubs.*</label>
+                                <span class="small">: Tout sur les clubs</span>
+                                <div class="ms-3">
+                                    <input type="checkbox" id="admin.clubs.view" name="admin.clubs.view" />
+                                    <label for="admin.clubs.view">admin.clubs.view</label>
+                                    <span class="small">: Voir les clubs</span>
+                                </div>
+                                <div class="ms-3">
+                                    <input type="checkbox" id="admin.clubs.create" name="admin.clubs.create" />
+                                    <label for="admin.clubs.create">admin.clubs.create</label>
+                                    <span class="small">: Créer des clubs</span>
+                                </div>
+                                <div class="ms-3">
+                                    <input type="checkbox" id="admin.clubs.edit" name="admin.clubs.edit" />
+                                    <label for="admin.clubs.edit">admin.clubs.edit</label>
+                                    <span class="small">: Modifier les clubs</span>
+                                </div>
+                                <div class="ms-3">
+                                    <input type="checkbox" id="admin.clubs.delete" name="admin.clubs.delete" />
+                                    <label for="admin.clubs.delete">admin.clubs.delete</label>
+                                    <span class="small">: Supprimer les clubs</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-end mt-4">
                         <input type="submit" name="permissions" class="btn bg-gradient-primary m-0 ms-2" value="Modifier">

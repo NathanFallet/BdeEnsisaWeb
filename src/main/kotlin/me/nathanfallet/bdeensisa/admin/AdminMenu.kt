@@ -33,7 +33,7 @@ fun Route.adminMenu() {
                 "menu" to MenuItems.fetchAdmin(user)
             )))
         }
-        get ("/new") {
+        get ("/create") {
             val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@get
@@ -54,7 +54,7 @@ fun Route.adminMenu() {
                 "parents" to parents
             )))
         }
-        post ("/new") {
+        post ("/create") {
             val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/menu")
                 return@post

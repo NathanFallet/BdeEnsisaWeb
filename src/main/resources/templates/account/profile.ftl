@@ -2,6 +2,11 @@
 <@template.page>
 <div class="container-fluid py-4">
     <div class="row mt-lg-4 mt-2">
+        <div class="col-md-8 me-auto text-left">
+            <h2 class="h5">Mon QR Code</h3>
+        </div>
+    </div>
+    <div class="row mt-lg-4 mt-2">
         <div class="col-lg-4 col-md-6 mb-4">
           <div class="card">
             <div class="card-body p-3">

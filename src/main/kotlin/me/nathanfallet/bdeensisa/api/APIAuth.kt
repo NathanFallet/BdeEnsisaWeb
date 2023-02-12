@@ -42,8 +42,7 @@ fun Route.apiAuth() {
                         Users.customJoin().select { Users.id eq userId }.mapUser(true).singleOrNull()
                     }
                     .singleOrNull()
-            }
-            if (user == null) {
+            } ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)
                 call.respond(mapOf("error" to "Invalid credentials"))
                 return@post
@@ -64,8 +63,7 @@ fun Route.apiAuth() {
         }
         authenticate("api-jwt") {
             get {
-                val user = getUser()
-                if (user == null) {
+                val user = getUser() ?: run {
                     call.response.status(HttpStatusCode.Unauthorized)
                     call.respond(mapOf("error" to "Invalid user"))
                     return@get

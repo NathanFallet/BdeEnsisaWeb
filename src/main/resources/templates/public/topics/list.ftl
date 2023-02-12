@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <div class="d-sm-flex justify-content-between">
         <div>
-            <a href="/topics/suggest" class="btn btn-icon btn-outline-white">
+            <a href="/topics/suggest" class="btn btn-icon btn-outline-primary">
                 Suggérer une affaire
             </a>
         </div>

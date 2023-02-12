@@ -45,6 +45,8 @@ object Database {
             SchemaUtils.create(Events)
             //SchemaUtils.create(Tickets)
             SchemaUtils.create(Questions)
+            SchemaUtils.create(Clubs)
+            SchemaUtils.create(ClubMemberships)
         }
 
         // Launch expiration

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 
 @Serializable
-data class NotificationToken(
+data class NotificationsToken(
     val token: String,
     val userId: String?,
     val expiration: Instant,
@@ -35,6 +35,6 @@ object NotificationsTokens : Table() {
 }
 
 @Serializable
-data class NotificationTokenUpload(
+data class NotificationsTokenUpload(
     val token: String
 )

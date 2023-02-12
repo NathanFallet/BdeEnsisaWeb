@@ -38,7 +38,7 @@ fun Route.adminEvents() {
                 "menu" to MenuItems.fetchAdmin(user)
             )))
         }
-        get ("/new") {
+        get ("/create") {
             val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@get
@@ -57,7 +57,7 @@ fun Route.adminEvents() {
                 "topics" to topics
             )))
         }
-        post ("/new") {
+        post ("/create") {
             val user = getUser() ?: run {
                 call.respondRedirect("/account/login?redirect=/admin/events")
                 return@post

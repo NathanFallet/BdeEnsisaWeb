@@ -20,7 +20,7 @@ fun Route.apiNotifications() {
                 return@post
             }
             val token = try {
-                call.receive<NotificationTokenUpload>()
+                call.receive<NotificationsTokenUpload>()
             } catch (e: Exception) {
                 call.response.status(HttpStatusCode.BadRequest)
                 call.respond(mapOf("error" to "Missing data"))

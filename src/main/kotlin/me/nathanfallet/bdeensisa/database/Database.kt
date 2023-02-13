@@ -37,6 +37,7 @@ object Database {
             SchemaUtils.create(Users)
             SchemaUtils.create(RegistrationRequests)
             SchemaUtils.create(LoginAuthorizes)
+            SchemaUtils.create(PasswordRequests)
             SchemaUtils.create(NotificationsTokens)
             SchemaUtils.create(Cotisants)
             SchemaUtils.create(Permissions)

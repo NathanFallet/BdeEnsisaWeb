@@ -17,6 +17,7 @@ fun Route.account() {
     route("/account") {
         accountLogin()
         accountRegister()
+        accountPasswordRecovery()
         accountAuthorize()
         accountQRCode()
         accountProfile()

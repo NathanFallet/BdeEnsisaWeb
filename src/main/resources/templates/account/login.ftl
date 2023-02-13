@@ -25,7 +25,7 @@
                     <input type="submit" class="btn btn-primary w-100 my-4 mb-2" value="Connexion">
                   </div>
                   <p class="text-sm mt-3 mb-0">Pas encore de compte ? <a href="/account/register" class="text-dark font-weight-bolder">Inscription</a></p>
-                  <p class="text-sm mb-0">Mot de passe oublié ? <a href="/account/password-recovery" class="text-dark font-weight-bolder">Réinitialiser</a></p>
+                  <p class="text-sm mt-2 mb-0">Mot de passe oublié ? <a href="/account/password-recovery" class="text-dark font-weight-bolder">Réinitialiser</a></p>
                 </form>
               </div>
             </div>

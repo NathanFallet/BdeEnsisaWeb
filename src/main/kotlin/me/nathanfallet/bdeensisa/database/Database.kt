@@ -76,6 +76,9 @@ object Database {
             RegistrationRequests.deleteWhere() {
                 Op.build { RegistrationRequests.expiration less Clock.System.now().toString() }
             }
+            PasswordRequests.deleteWhere() {
+                Op.build { PasswordRequests.expiration less Clock.System.now().toString() }
+            }
             LoginAuthorizes.deleteWhere() {
                 Op.build { LoginAuthorizes.expiration less Clock.System.now().toString() }
             }

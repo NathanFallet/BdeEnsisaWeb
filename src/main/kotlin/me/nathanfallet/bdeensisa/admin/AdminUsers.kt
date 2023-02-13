@@ -11,6 +11,8 @@ import kotlinx.datetime.*
 import me.nathanfallet.bdeensisa.account.getUser
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.Notifications
+import me.nathanfallet.bdeensisa.plugins.Notification
 import org.jetbrains.exposed.sql.*
 
 fun Route.adminUsers() {
@@ -112,6 +114,13 @@ fun Route.adminUsers() {
                             it[Cotisants.updatedAt] = Clock.System.now().toString()
                         }
                     }
+                    Notifications.sendNotificationToUser(
+                        selectedUser.id,
+                        Notification(
+                            "Statut de cotisant mis à jour !",
+                            "Votre statut de cotisant a été mis à jour"
+                        )
+                    )
                 }
                 call.respondRedirect("/admin/users/${selectedUser.id}")
                 return@post

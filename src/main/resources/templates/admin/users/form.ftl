@@ -96,6 +96,11 @@
                         <label for="admin.dashboard">admin.dashboard</label>
                         <span class="small">: Voir le tableau de bord</span>
                     </div>
+                    <div class="ms-3">
+                        <input type="checkbox" id="admin.notifications" name="admin.notifications" />
+                        <label for="admin.notifications">admin.notifications</label>
+                        <span class="small">: Envoyer des notifications</span>
+                    </div>
                     <div class="row">
                         <div class="col-lg-4 col-md-6">
                             <div class="ms-3">

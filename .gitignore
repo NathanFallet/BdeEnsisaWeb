@@ -42,6 +42,7 @@ out/
 ### Keys ###
 *.pem
 *.p8
+firebase-adminsdk.json
 
 ### Uploaded files ###
 /uploads/

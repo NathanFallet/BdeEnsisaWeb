@@ -9,10 +9,33 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.Notifications
+import me.nathanfallet.bdeensisa.plugins.NotificationPayload
 import org.jetbrains.exposed.sql.*
 
 fun Route.apiNotifications() {
     route("/notifications") {
+        post {
+            val user = getUser() ?: run {
+                call.response.status(HttpStatusCode.Unauthorized)
+                call.respond(mapOf("error" to "Invalid user"))
+                return@post
+            }
+            if (!user.hasPermission("admin.notifications")) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(mapOf("error" to "Not allowed to send notifications"))
+                return@post
+            }
+            val payload = try {
+                call.receive<NotificationPayload>()
+            } catch (e: Exception) {
+                call.response.status(HttpStatusCode.BadRequest)
+                call.respond(mapOf("error" to "Missing data"))
+                return@post
+            }
+            Notifications.sendNotificationFromPayload(payload)
+            call.response.status(HttpStatusCode.Created)
+        }
         post("/tokens") {
             val user = getUser() ?: run {
                 call.response.status(HttpStatusCode.Unauthorized)

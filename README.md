@@ -31,3 +31,5 @@ Here is the list of environment variables used by the server:
 | DB_PASSWORD    | MySQL user password     |
 | EMAIL_PASSWORD | Password to send emails |
 | JWT_SECRET     | Secret to sign JWTs     |
+
+Also, for notifications, the google service account key must be in the `firebase-adminsdk.json` file.

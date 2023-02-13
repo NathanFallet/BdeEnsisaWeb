@@ -11,6 +11,8 @@ import io.ktor.http.HttpStatusCode
 import me.nathanfallet.bdeensisa.account.getUser
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.Notifications
+import me.nathanfallet.bdeensisa.plugins.Notification
 import org.jetbrains.exposed.sql.*
 
 fun Route.adminQuestions() {
@@ -144,6 +146,15 @@ fun Route.adminQuestions() {
                     it[Questions.content] = content
                     it[Questions.answer] = answer?.let { if (it == "") null else it }
                 }
+            }
+            if (question.answer == null && answer != null && answer != "") {
+                Notifications.sendNotificationToUser(
+                    question.userId,
+                    Notification(
+                        "${user.firstName} a répondu à votre question",
+                        answer
+                    )
+                )
             }
             call.respondRedirect("/admin/questions")
         }

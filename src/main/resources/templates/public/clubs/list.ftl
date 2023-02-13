@@ -35,7 +35,7 @@
                     <span class="badge bg-gradient-success text-white float-end">Membre</span>
                     </#if>
                 </h6>
-                <p class="mb-0 px-3">Ajouté ${membership.club.formatted}</p>
+                <p class="mb-0 px-3">${membership.club.membersCount} membre<#if membership.club.membersCount != 1>s</#if></p>
                 <hr class="horizontal dark">
                 <div class="mb-0 px-3">${membership.club.markdown}</div>
             </div>
@@ -60,7 +60,7 @@
                     <a href="/clubs/${club.id}/join" class="badge bg-gradient-info text-white float-end">Rejoindre</a>
                     </#if>
                 </h6>
-                <p class="mb-0 px-3">Ajouté ${club.formatted}</p>
+                <p class="mb-0 px-3">${club.membersCount} membre<#if club.membersCount != 1>s</#if></p>
                 <hr class="horizontal dark">
                 <div class="mb-0 px-3">${club.markdown}</div>
             </div>

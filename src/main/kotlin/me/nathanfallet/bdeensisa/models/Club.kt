@@ -13,18 +13,21 @@ data class Club(
     val description: String?,
     val information: String?,
     val createdAt: Instant?,
-    val validated: Boolean?
+    val validated: Boolean?,
+    val membersCount: Long?
 ) {
 
     constructor(
-        row: ResultRow
+        row: ResultRow,
+        membersCount: Long? = null
     ) : this(
         row[Clubs.id],
         row[Clubs.name],
         row.getOrNull(Clubs.description),
         row.getOrNull(Clubs.information),
         row.getOrNull(Clubs.createdAt)?.toInstant(),
-        row.getOrNull(Clubs.validated)
+        row.getOrNull(Clubs.validated),
+        membersCount
     )
 
     val formatted: String
@@ -69,4 +72,24 @@ object Clubs : Table() {
         }
     }
 
+}
+
+fun Query.mapClubWithCount(): List<Club> {
+    return map {
+        val id = it[Clubs.id]
+        val count = ClubMemberships.select {
+            ClubMemberships.clubId eq id
+        }.count()
+        Club(it, count)
+    }
+}
+
+fun Query.mapClubMembershipWithCount(): List<ClubMembership> {
+    return map {
+        val id = it[Clubs.id]
+        val count = ClubMemberships.select {
+            ClubMemberships.clubId eq id
+        }.count()
+        ClubMembership(it, null, Club(it, count))
+    }
 }

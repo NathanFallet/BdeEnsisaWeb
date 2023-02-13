@@ -23,14 +23,14 @@ fun Route.publicClubs() {
                         .join(Clubs, JoinType.INNER, ClubMemberships.clubId, Clubs.id)
                         .select { ClubMemberships.userId eq user.id }
                         .orderBy(Clubs.createdAt, SortOrder.DESC)
-                        .map { ClubMembership(it, null, Club(it)) }
+                        .mapClubMembershipWithCount()
                 }
             } ?: emptyList()
             val clubs = Database.dbQuery {
                 Clubs
                     .select { Clubs.validated eq true and (Clubs.id notInList mine.map { it.clubId }) }
                     .orderBy(Clubs.createdAt, SortOrder.DESC)
-                    .map { Club(it) }
+                    .mapClubWithCount()
             }
             call.respond(FreeMarkerContent(
                 "public/clubs/list.ftl",

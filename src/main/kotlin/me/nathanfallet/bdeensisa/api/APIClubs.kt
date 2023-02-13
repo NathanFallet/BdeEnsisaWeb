@@ -22,7 +22,7 @@ fun Route.apiClubs() {
                     .select { Clubs.validated eq true }
                     .orderBy(Clubs.createdAt, SortOrder.DESC)
                     .limit(limit, offset)
-                    .map { Club(it) }
+                    .mapClubWithCount()
             }
             call.respond(clubs)
         }
@@ -31,7 +31,7 @@ fun Route.apiClubs() {
                 Database.dbQuery {
                     Clubs
                         .select { Clubs.id eq id }
-                        .map { Club(it) }
+                        .mapClubWithCount()
                         .firstOrNull()
                 }
             }
@@ -70,7 +70,7 @@ fun Route.apiClubs() {
                         .join(Clubs, JoinType.INNER, ClubMemberships.clubId, Clubs.id)
                         .select { ClubMemberships.userId eq user.id }
                         .orderBy(Clubs.createdAt, SortOrder.DESC)
-                        .map { ClubMembership(it, null, Club(it)) }
+                        .mapClubMembershipWithCount()
                 }
                 call.respond(clubs)
             }

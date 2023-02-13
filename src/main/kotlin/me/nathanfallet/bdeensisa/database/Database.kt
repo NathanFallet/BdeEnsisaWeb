@@ -85,6 +85,11 @@ object Database {
             NotificationsTokens.deleteWhere() {
                 Op.build { NotificationsTokens.expiration less Clock.System.now().toString() }
             }
+            Events.select {
+                Events.end less Clock.System.now().minus(1, DateTimeUnit.YEAR, TimeZone.currentSystemDefault()).toString()
+            }.forEach {
+                Events.delete(it[Events.id])
+            }
         }
     }
 

@@ -24,14 +24,8 @@
                   <div class="text-center">
                     <input type="submit" class="btn btn-primary w-100 my-4 mb-2" value="Connexion">
                   </div>
-                  <div class="mb-2 position-relative text-center">
-                    <p class="text-sm font-weight-bold mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                      ou
-                    </p>
-                  </div>
-                  <div class="text-center">
-                    <a href="/account/register" class="btn bg-gradient-dark w-100 mt-2 mb-4">Inscription</a>
-                  </div>
+                  <p class="text-sm mt-3 mb-0">Pas encore de compte ? <a href="/account/register" class="text-dark font-weight-bolder">Inscription</a></p>
+                  <p class="text-sm mb-0">Mot de passe oublié ? <a href="/account/password-recovery" class="text-dark font-weight-bolder">Réinitialiser</a></p>
                 </form>
               </div>
             </div>

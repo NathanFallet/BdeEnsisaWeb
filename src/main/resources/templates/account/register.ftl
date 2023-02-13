@@ -61,7 +61,7 @@
                       <input type="password" class="form-control" name="password" placeholder="Mot de passe" aria-label="Mot de passe" required>
                     </div>
                     <div class="mb-3">
-                      <input type="password" class="form-control" name="password2" placeholder="Mot de passe" aria-label="Mot de passe" required>
+                      <input type="password" class="form-control" name="password2" placeholder="Confirmez le mot de passe" aria-label="Confirmez le mot de passe" required>
                     </div>
                   <#else>
                     <p>

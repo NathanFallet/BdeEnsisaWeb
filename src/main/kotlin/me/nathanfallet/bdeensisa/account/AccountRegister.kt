@@ -139,6 +139,7 @@ fun Route.accountRegister() {
                 "account/register.ftl",
                 mapOf(
                     "title" to "Inscription",
+                    "request" to request,
                     "error" to "Remplissez tous les champs !",
                     "redirect" to call.request.queryParameters["redirect"]
                 )
@@ -150,6 +151,7 @@ fun Route.accountRegister() {
                 "account/register.ftl",
                 mapOf(
                     "title" to "Inscription",
+                    "request" to request,
                     "error" to "Option invalide !",
                     "redirect" to call.request.queryParameters["redirect"]
                 )
@@ -161,6 +163,7 @@ fun Route.accountRegister() {
                 "account/register.ftl",
                 mapOf(
                     "title" to "Inscription",
+                    "request" to request,
                     "error" to "Année invalide !",
                     "redirect" to call.request.queryParameters["redirect"]
                 )
@@ -172,6 +175,7 @@ fun Route.accountRegister() {
                 "account/register.ftl",
                 mapOf(
                     "title" to "Inscription",
+                    "request" to request,
                     "error" to "Les mots de passe ne correspondent pas !",
                     "redirect" to call.request.queryParameters["redirect"]
                 )
@@ -196,6 +200,7 @@ fun Route.accountRegister() {
                 "account/register.ftl",
                 mapOf(
                     "title" to "Inscription",
+                    "request" to request,
                     "error" to "Erreur lors de l'inscription !",
                     "redirect" to call.request.queryParameters["redirect"]
                 )

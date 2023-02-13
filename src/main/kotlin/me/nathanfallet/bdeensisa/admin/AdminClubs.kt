@@ -11,6 +11,8 @@ import io.ktor.http.HttpStatusCode
 import me.nathanfallet.bdeensisa.account.getUser
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.Notifications
+import me.nathanfallet.bdeensisa.plugins.Notification
 import org.jetbrains.exposed.sql.*
 
 fun Route.adminClubs() {
@@ -163,6 +165,21 @@ fun Route.adminClubs() {
                     it[Clubs.validated] = validated
                 }
             }
+            if (club.validated != true && validated) {
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id }
+                        .map { it[ClubMemberships.userId] }
+                }.forEach { userId ->
+                    Notifications.sendNotificationToUser(
+                        userId,
+                        Notification(
+                            "${user.firstName} a validé votre club",
+                            name
+                        )
+                    )
+                }
+            }
             call.respondRedirect("/admin/clubs")
         }
         get ("/{id}/delete") {
@@ -188,6 +205,21 @@ fun Route.adminClubs() {
             }
             Database.dbQuery {
                 Clubs.delete(club.id)
+            }
+            if (club.validated != true) {
+                Database.dbQuery {
+                    ClubMemberships
+                        .select { ClubMemberships.clubId eq club.id }
+                        .map { it[ClubMemberships.userId] }
+                }.forEach { userId ->
+                    Notifications.sendNotificationToUser(
+                        userId,
+                        Notification(
+                            "${user.firstName} a rejeté votre club",
+                            club.name
+                        )
+                    )
+                }
             }
             call.respondRedirect("/admin/clubs")
         }

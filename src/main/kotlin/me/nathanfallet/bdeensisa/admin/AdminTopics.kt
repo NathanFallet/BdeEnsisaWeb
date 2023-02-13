@@ -11,6 +11,8 @@ import io.ktor.http.HttpStatusCode
 import me.nathanfallet.bdeensisa.account.getUser
 import me.nathanfallet.bdeensisa.database.Database
 import me.nathanfallet.bdeensisa.models.*
+import me.nathanfallet.bdeensisa.plugins.Notifications
+import me.nathanfallet.bdeensisa.plugins.Notification
 import org.jetbrains.exposed.sql.*
 
 fun Route.adminTopics() {
@@ -149,6 +151,15 @@ fun Route.adminTopics() {
                     it[Topics.validated] = validated
                 }
             }
+            if (topic.validated != true && validated) {
+                Notifications.sendNotificationToUser(
+                    topic.userId,
+                    Notification(
+                        "${user.firstName} a validé votre affaire",
+                        title
+                    )
+                )
+            }
             call.respondRedirect("/admin/topics")
         }
         get ("/{id}/delete") {
@@ -174,6 +185,15 @@ fun Route.adminTopics() {
             }
             Database.dbQuery {
                 Topics.delete(topic.id)
+            }
+            if (topic.validated != true) {
+                Notifications.sendNotificationToUser(
+                    topic.userId,
+                    Notification(
+                        "${user.firstName} a rejeté votre affaire",
+                        topic.title ?: ""
+                    )
+                )
             }
             call.respondRedirect("/admin/topics")
         }

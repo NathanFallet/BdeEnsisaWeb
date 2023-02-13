@@ -44,6 +44,12 @@ object Notifications {
         }
     }
 
+    fun sendNotificationFromPayload(notification: NotificationPayload) {
+        CoroutineScope(Job()).launch {
+            sendNotification(notification)
+        }
+    }
+
     fun sendNotificationToUser(userId: String, notification: Notification) {
         CoroutineScope(Job()).launch {
             Database.dbQuery {

@@ -60,7 +60,7 @@ fun Route.adminPages() {
             }
             val params = call.receiveParameters()
             val url = params["url"]
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val home = params["home"] == "on"
             if (url == null || title == null || content == null) {
@@ -125,7 +125,7 @@ fun Route.adminPages() {
             }
             val params = call.receiveParameters()
             val url = params["url"]
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val home = params["home"] == "on"
             if (url == null || title == null || content == null) {

@@ -66,7 +66,7 @@ fun Route.publicTopics() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             if (title == null || content == null) {
                 call.respond(FreeMarkerContent(

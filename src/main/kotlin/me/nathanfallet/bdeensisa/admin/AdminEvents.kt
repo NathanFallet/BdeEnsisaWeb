@@ -68,7 +68,7 @@ fun Route.adminEvents() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val start = params["start"]?.toInstant()
             val end = params["end"]?.toInstant()
@@ -144,7 +144,7 @@ fun Route.adminEvents() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val start = params["start"]?.toInstant()
             val end = params["end"]?.toInstant()

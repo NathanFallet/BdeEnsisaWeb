@@ -82,8 +82,8 @@ fun Route.adminUsers() {
                 return@post
             }
             val params = call.receiveParameters()
-            val firstName = params["first_name"]
-            val lastName = params["last_name"]
+            val firstName = params["first_name"]?.trim()
+            val lastName = params["last_name"]?.trim()
             val year = params["year"]
             val option = params["option"]
             val expiration = params["expiration"]?.toLocalDate()

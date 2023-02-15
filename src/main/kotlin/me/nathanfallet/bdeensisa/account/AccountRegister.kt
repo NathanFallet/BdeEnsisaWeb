@@ -121,8 +121,8 @@ fun Route.accountRegister() {
             return@post
         }
         val params = call.receiveParameters()
-        val firstName = params["first_name"]
-        val lastName = params["last_name"]
+        val firstName = params["first_name"]?.trim()
+        val lastName = params["last_name"]?.trim()
         val option = params["option"]
         val year = params["year"]
         val password = params["password"]

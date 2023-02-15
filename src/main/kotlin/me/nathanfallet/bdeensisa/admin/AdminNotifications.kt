@@ -43,7 +43,7 @@ fun Route.adminNotifications() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val body = params["body"]
             val topic = params["topic"] ?: "broadcast"
             if (title == null || body == null) {

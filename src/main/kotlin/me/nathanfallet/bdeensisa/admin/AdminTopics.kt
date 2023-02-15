@@ -66,7 +66,7 @@ fun Route.adminTopics() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val validated = params["validated"] == "on"
             if (title == null || content == null) {
@@ -136,7 +136,7 @@ fun Route.adminTopics() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val content = params["content"]
             val validated = params["validated"] == "on"
             if (title == null || content == null) {

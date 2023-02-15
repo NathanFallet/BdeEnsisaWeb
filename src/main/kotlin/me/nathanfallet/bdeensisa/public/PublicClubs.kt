@@ -104,7 +104,7 @@ fun Route.publicClubs() {
                 return@post
             }
             val params = call.receiveParameters()
-            val name = params["name"]
+            val name = params["name"]?.trim()
             val description = params["description"]
             val information = params["information"]
             if (name == null || description == null || information == null) {

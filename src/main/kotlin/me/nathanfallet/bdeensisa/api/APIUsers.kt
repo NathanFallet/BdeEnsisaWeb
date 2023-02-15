@@ -165,8 +165,8 @@ fun Route.apiUsers() {
             }
             Database.dbQuery {
                 Users.update({ Users.id eq selectedUser.id }) {
-                    it[Users.firstName] = upload.firstName ?: selectedUser.firstName!!
-                    it[Users.lastName] = upload.lastName ?: selectedUser.lastName!!
+                    it[Users.firstName] = upload.firstName?.trim() ?: selectedUser.firstName!!
+                    it[Users.lastName] = upload.lastName?.trim() ?: selectedUser.lastName!!
                     it[Users.option] = upload.option ?: selectedUser.option!!
                     it[Users.year] = upload.year ?: selectedUser.year!!
                 }

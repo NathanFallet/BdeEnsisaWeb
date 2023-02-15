@@ -65,7 +65,7 @@ fun Route.adminMenu() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val url = params["url"]
             val position = params["position"]
             val parent = params["parent"]
@@ -136,7 +136,7 @@ fun Route.adminMenu() {
                 return@post
             }
             val params = call.receiveParameters()
-            val title = params["title"]
+            val title = params["title"]?.trim()
             val url = params["url"]
             val position = params["position"]
             val parent = params["parent"]

@@ -45,13 +45,14 @@ fun Route.adminNotifications() {
             val params = call.receiveParameters()
             val title = params["title"]
             val body = params["body"]
+            val topic = params["topic"] ?: "broadcast"
             if (title == null || body == null) {
                 call.response.status(HttpStatusCode.BadRequest)
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Requête invalide")))
                 return@post
             }
             Notifications.sendNotificationToTopic(
-                "broadcast",
+                topic,
                 Notification(title, body)
             )
             call.respond(FreeMarkerContent("admin/notifications/send.ftl", mapOf(

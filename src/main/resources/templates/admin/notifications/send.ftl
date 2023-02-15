@@ -18,6 +18,13 @@
         </#if>
 
         <form method="post" id="form">
+            <label for="topic" class="form-label mt-4">Sujet</label>
+            <select class="form-control" name="topic" id="topic">
+                <option value="broadcast">Général</option>
+                <option value="cotisants">Cotisants</option>
+                <option value="events">Evènements</option>
+            </select>
+
             <label for="title" class="form-label">Titre de la notification</label>
             <input type="text" class="form-control" name="title" id="title" required>
 

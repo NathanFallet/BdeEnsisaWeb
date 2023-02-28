@@ -90,6 +90,11 @@ object Database {
             }.forEach {
                 Events.delete(it[Events.id])
             }
+            Users.select {
+                Users.expiration less Clock.System.now().toString()
+            }.forEach {
+                Users.delete(it[Users.id])
+            }
         }
     }
 

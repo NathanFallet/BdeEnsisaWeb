@@ -42,6 +42,7 @@
                                     <option value="2A">2A</option>
                                     <option value="3A">3A</option>
                                     <option value="other">4A et plus</option>
+                                    <option value="CPB">CPB</option>
                                 </select>
                             </div>
                         </div>

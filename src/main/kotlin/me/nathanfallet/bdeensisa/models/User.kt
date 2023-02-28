@@ -14,6 +14,7 @@ data class User(
     val lastName: String?,
     val option: String?,
     val year: String?,
+    val expiration: Instant?,
     val cotisant: Cotisant? = null,
     var permissions: List<String>? = null
 ) {
@@ -30,6 +31,7 @@ data class User(
         row.getOrNull(Users.lastName),
         row.getOrNull(Users.option),
         row.getOrNull(Users.year),
+        row.getOrNull(Users.expiration)?.toInstant(),
         cotisant,
         permissions
     )
@@ -80,6 +82,7 @@ object Users : Table() {
     val lastName = varchar("last_name", 255)
     val option = varchar("option", 255)
     val year = varchar("year", 255)
+    val expiration = varchar("expiration", 255)
 
     override val primaryKey = PrimaryKey(id)
 
@@ -90,6 +93,44 @@ object Users : Table() {
             return generateId()
         } else {
             return candidate
+        }
+    }
+
+    fun delete(id: String) {
+        Users.deleteWhere {
+            Op.build { Users.id eq id }
+        }
+        Cotisants.deleteWhere {
+            Op.build { Cotisants.userId eq id }
+        }
+        LoginAuthorizes.deleteWhere {
+            Op.build { LoginAuthorizes.user eq id }
+        }
+        PasswordRequests.deleteWhere {
+            Op.build { PasswordRequests.userId eq id }
+        }
+        NotificationsTokens.deleteWhere {
+            Op.build { NotificationsTokens.userId eq id }
+        }
+        Permissions.deleteWhere {
+            Op.build { Permissions.userId eq id }
+        }
+        ClubMemberships.deleteWhere {
+            Op.build { ClubMemberships.userId eq id }
+        }
+        Questions.deleteWhere {
+            Op.build { Questions.userId eq id }
+        }
+        /*
+        TODO: Tickets
+        Tickets.deleteWhere {
+            Op.build { Tickets.userId eq id }
+        }
+        */
+        Topics.select {
+            Topics.userId eq id
+        }.forEach {
+            Topics.delete(it[Topics.id])
         }
     }
 

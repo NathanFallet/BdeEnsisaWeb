@@ -46,7 +46,7 @@ fun Route.apiUsers() {
                 }
             }
             upload.year?.let { year ->
-                if (!listOf("1A", "2A", "3A", "other").contains(year)) {
+                if (!listOf("CPB", "1A", "2A", "3A", "other").contains(year)) {
                     call.response.status(HttpStatusCode.BadRequest)
                     call.respond(mapOf(
                         "error" to "Année invalide !"
@@ -155,7 +155,7 @@ fun Route.apiUsers() {
                 }
             }
             upload.year?.let { year ->
-                if (!listOf("1A", "2A", "3A", "other").contains(year)) {
+                if (!listOf("CPB", "1A", "2A", "3A", "other").contains(year)) {
                     call.response.status(HttpStatusCode.BadRequest)
                     call.respond(mapOf(
                         "error" to "Année invalide !"

@@ -27,6 +27,7 @@
                         <div class="col-4">
                             <label for="year" class="form-label mt-4">Année</label>
                             <select name="year" class="form-control" id="year">
+                                <option value="CPB" <#if user.year == "CPB">selected</#if>>CPB</option>
                                 <option value="1A" <#if user.year == "1A">selected</#if>>1A</option>
                                 <option value="2A" <#if user.year == "2A">selected</#if>>2A</option>
                                 <option value="3A" <#if user.year == "3A">selected</#if>>3A</option>

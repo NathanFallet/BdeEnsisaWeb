@@ -158,7 +158,7 @@ fun Route.accountRegister() {
             ))
             return@post
         }
-        if (!listOf("1A", "2A", "3A", "other").contains(year)) {
+        if (!listOf("CPB", "1A", "2A", "3A", "other").contains(year)) {
             call.respond(FreeMarkerContent(
                 "account/register.ftl",
                 mapOf(
@@ -182,6 +182,7 @@ fun Route.accountRegister() {
             ))
             return@post
         }
+        val expiration = Clock.System.now().plus(5, DateTimeUnit.YEAR, TimeZone.currentSystemDefault())
         val user = Database.dbQuery {
             RegistrationRequests.deleteWhere {
                 Op.build { RegistrationRequests.code eq request.code }
@@ -193,6 +194,7 @@ fun Route.accountRegister() {
                 it[Users.email] = request.email
                 it[Users.option] = option
                 it[Users.year] = year
+                it[Users.expiration] = expiration.toString()
                 it[Users.password] = BCrypt.withDefaults().hashToString(12, password.toCharArray())
             }
         }.resultedValues?.map{ User(it) }?.singleOrNull() ?: run {

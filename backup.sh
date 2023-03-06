@@ -32,6 +32,8 @@ cp -r uploads "$DIR/uploads"
 # Git
 
 cd $DIR
+rm -rf uploads/users # Remove user pictures (don't want to backup them, too big)
+git pull
 git add .
 git commit -m "Backup $(date)"
 git push

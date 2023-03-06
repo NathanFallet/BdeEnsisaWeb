@@ -22,7 +22,7 @@ fun Route.publicUploads() {
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))
                 return@get
             }
-            val file = File("uploads/$name")
+            val file = File("uploads/public/$name")
             if (!file.exists()) {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(FreeMarkerContent("public/error.ftl", mapOf("title" to "Page non trouvée")))

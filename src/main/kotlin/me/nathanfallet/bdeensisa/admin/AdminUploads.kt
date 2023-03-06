@@ -29,7 +29,7 @@ fun Route.adminUploads() {
                 call.respond(FreeMarkerContent("admin/error.ftl", mapOf("title" to "Accès non autorisé")))
                 return@get
             }
-            val uploadsFolder = Paths.get("uploads")
+            val uploadsFolder = Paths.get("uploads/public")
             if (!Files.exists(uploadsFolder)) {
                 Files.createDirectory(uploadsFolder)
             }
@@ -56,7 +56,7 @@ fun Route.adminUploads() {
             multipart.forEachPart { part ->
                 if (part is PartData.FileItem) {
                     val name = part.originalFileName!!
-                    val file = File("uploads/$name")
+                    val file = File("uploads/public/$name")
 
                     part.streamProvider().use { its ->
                         file.outputStream().buffered().use {

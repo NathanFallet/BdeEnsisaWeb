@@ -66,6 +66,7 @@ fun Route.adminUploads() {
                 }
                 part.dispose()
             }
+            call.respondRedirect("/admin/uploads")
         }
     }
 }

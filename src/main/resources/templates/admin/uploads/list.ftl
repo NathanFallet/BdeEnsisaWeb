@@ -22,7 +22,7 @@
                 <#list uploads as upload>
                 <tr>
                   <td class="font-weight-bold">
-                    <span class="my-2 text-xs"><a href="/${upload}">${upload}</a></span>
+                    <span class="my-2 text-xs"><a href="/uploads/${upload.name}">/uploads/${upload.name}</a></span>
                   </td>
                 </tr>
                 </#list>

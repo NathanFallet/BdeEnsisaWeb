@@ -226,7 +226,7 @@ fun Route.apiUsers() {
                 call.respond(mapOf("error" to "Not allowed to view user pictures"))
                 return@get
             }
-            val file = File("uploads/users/${call.parameters["id"]}_picture.jpg")
+            val file = File("uploads/users/${call.parameters["id"]}/picture.jpg")
             if (!file.exists()) {
                 call.response.status(HttpStatusCode.NotFound)
                 call.respond(mapOf("error" to "File not found"))
@@ -249,19 +249,19 @@ fun Route.apiUsers() {
             if (!Files.exists(uploadsFolder)) {
                 Files.createDirectory(uploadsFolder)
             }
-            val multipart = call.receiveMultipart()
-            multipart.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    val file = File("uploads/users/${call.parameters["id"]}_picture.jpg")
-
-                    part.streamProvider().use { its ->
-                        file.outputStream().buffered().use {
-                            its.copyTo(it)
-                        }
+            val userFolder = Paths.get("uploads/users/${call.parameters["id"]}")
+            if (!Files.exists(userFolder)) {
+                Files.createDirectory(userFolder)
+            }
+            call.receiveStream().use { input ->
+                val file = File("uploads/users/${call.parameters["id"]}/picture.jpg")
+                withContext(Dispatchers.IO) {
+                    file.outputStream().buffered().use {
+                        input.copyTo(it)
                     }
                 }
-                part.dispose()
             }
+            call.response.status(HttpStatusCode.Created)
         }
     }
 }

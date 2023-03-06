@@ -4,6 +4,10 @@ import kotlinx.serialization.Serializable
 import me.nathanfallet.bdeensisa.database.Database
 import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.io.File
 
 @Serializable
 data class User(
@@ -97,6 +101,7 @@ object Users : Table() {
     }
 
     fun delete(id: String) {
+        // Delete from Database
         Users.deleteWhere {
             Op.build { Users.id eq id }
         }
@@ -132,6 +137,12 @@ object Users : Table() {
         }.forEach {
             Topics.delete(it[Topics.id])
         }
+
+        // But also delete user folder
+        Files.walk(Paths.get("uploads/users/$id"))
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete)
     }
 
     fun customJoin(): FieldSet {

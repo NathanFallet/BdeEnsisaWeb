@@ -87,3 +87,12 @@ object Events : Table() {
     }
 
 }
+
+@Serializable
+data class EventUpload(
+    val title: String?,
+    val content: String?,
+    val start: String?,
+    val end: String?,
+    val topicId: String?
+)

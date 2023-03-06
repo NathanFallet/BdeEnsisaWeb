@@ -1,5 +1,6 @@
 package me.nathanfallet.bdeensisa.api
 
+import io.ktor.http.content.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -12,6 +13,9 @@ import me.nathanfallet.bdeensisa.models.*
 import me.nathanfallet.bdeensisa.plugins.Notifications
 import me.nathanfallet.bdeensisa.plugins.Notification
 import org.jetbrains.exposed.sql.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 fun Route.apiUsers() {
     route("/users") {
@@ -210,6 +214,54 @@ fun Route.apiUsers() {
                 return@put
             }
             call.respond(newUser)
+        }
+        get("/{id}/picture") {
+            val user = getUser() ?: run {
+                call.response.status(HttpStatusCode.Unauthorized)
+                call.respond(mapOf("error" to "Invalid user"))
+                return@get
+            }
+            if (!user.hasPermission("admin.users.view") && user.id != call.parameters["id"]) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(mapOf("error" to "Not allowed to view user pictures"))
+                return@get
+            }
+            val file = File("uploads/users/${call.parameters["id"]}_picture.jpg")
+            if (!file.exists()) {
+                call.response.status(HttpStatusCode.NotFound)
+                call.respond(mapOf("error" to "File not found"))
+                return@get
+            }
+            call.respondFile(file)
+        }
+        post("/{id}/picture") {
+            val user = getUser() ?: run {
+                call.response.status(HttpStatusCode.Unauthorized)
+                call.respond(mapOf("error" to "Invalid user"))
+                return@post
+            }
+            if (!user.hasPermission("admin.users.edit") && user.id != call.parameters["id"]) {
+                call.response.status(HttpStatusCode.Forbidden)
+                call.respond(mapOf("error" to "Not allowed to edit user pictures"))
+                return@post
+            }
+            val uploadsFolder = Paths.get("uploads/users")
+            if (!Files.exists(uploadsFolder)) {
+                Files.createDirectory(uploadsFolder)
+            }
+            val multipart = call.receiveMultipart()
+            multipart.forEachPart { part ->
+                if (part is PartData.FileItem) {
+                    val file = File("uploads/users/${call.parameters["id"]}_picture.jpg")
+
+                    part.streamProvider().use { its ->
+                        file.outputStream().buffered().use {
+                            its.copyTo(it)
+                        }
+                    }
+                }
+                part.dispose()
+            }
         }
     }
 }
